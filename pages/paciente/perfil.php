@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Perfil del Paciente';
+$pageTitle = 'Mi Perfil';
 require_once __DIR__ . '/../../config/config.php';
 requireRole('paciente');
 require_once __DIR__ . '/../../includes/db.php';
@@ -43,8 +43,8 @@ if(!empty($paciente['fecha_nacimiento'])){
 <div class="topbar">
 
     <div class="topbar-left">
-        <h1>Perfil del Paciente</h1>
-        <p>Informacion personal del paciente</p>
+        <h1>Mi Perfil</h1>
+        <p>Información general registrada en tu expediente</p>
     </div>
 
     <div class="topbar-right">
@@ -57,88 +57,80 @@ if(!empty($paciente['fecha_nacimiento'])){
 
 <div class="content">
 
-<div class="card">
+<div class="card" style="max-width: 800px; margin: 0 auto;">
 
 <div class="card-header">
     <div>
-        <h2>Informacion Personal</h2>
-        <p>Datos registrados del paciente</p>
+        <h2>Datos del Paciente</h2>
+        <p>Información personal almacenada de forma segura</p>
     </div>
 </div>
 
 <div class="card-body">
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
 
 <div class="form-group">
-<label>Nombre completo</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Nombre completo</label>
 <input type="text"
        class="form-control"
        value="<?= htmlspecialchars($paciente['nombre']) ?>"
-       readonly>
+       readonly style="background: #f8fafc;">
 </div>
 
 <div class="form-group">
-<label>Correo electronico</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Correo electrónico</label>
 <input type="email"
        class="form-control"
        value="<?= htmlspecialchars($paciente['email']) ?>"
-       readonly>
+       readonly style="background: #f8fafc;">
 </div>
 
 <div class="form-group">
-<label>Telefono</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Teléfono</label>
 <input type="text"
        class="form-control"
        value="<?= htmlspecialchars($paciente['telefono'] ?? 'No registrado') ?>"
-       readonly>
+       readonly style="background: #f8fafc;">
 </div>
 
 <div class="form-group">
-<label>Direccion</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Dirección</label>
 <input type="text"
        class="form-control"
        value="<?= htmlspecialchars($paciente['direccion'] ?? 'No registrada') ?>"
-       readonly>
+       readonly style="background: #f8fafc;">
 </div>
 
 <div class="form-group">
-<label>Fecha de nacimiento</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Fecha de nacimiento</label>
 <input type="text"
        class="form-control"
        value="<?= htmlspecialchars($paciente['fecha_nacimiento'] ?? 'No registrada') ?>"
-       readonly>
+       readonly style="background: #f8fafc;">
 </div>
 
 <div class="form-group">
-<label>Edad</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Edad</label>
 <input type="text"
        class="form-control"
-       value="<?= $edad ?> años"
-       readonly>
+       value="<?= $edad ? $edad . ' años' : 'No especificada' ?>"
+       readonly style="background: #f8fafc;">
 </div>
 
-<div class="form-group">
-<label>Tipo de sangre</label>
-
+<div class="form-group" style="grid-column: 1 / -1;">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Tipo de sangre</label>
 <input type="text"
        class="form-control"
        value="<?= htmlspecialchars($paciente['tipo_sangre'] ?? 'No registrado') ?>"
-       readonly>
+       readonly style="background: #f8fafc;">
 </div>
 
 <div class="form-group" style="grid-column:1 / span 2;">
-<label>Alergias</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Alergias o padecimientos</label>
 <textarea class="form-control"
           rows="3"
-          readonly><?= htmlspecialchars($paciente['alergias'] ?? 'No registradas') ?></textarea>
+          readonly style="background: #f8fafc; resize: none;"><?= htmlspecialchars($paciente['alergias'] ?? 'No registradas') ?></textarea>
 </div>
 
 </div>

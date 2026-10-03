@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Historial Medico';
+$pageTitle = 'Historial Médico';
 require_once __DIR__ . '/../../config/config.php';
 requireRole('paciente');
 require_once __DIR__ . '/../../includes/db.php';
@@ -34,7 +34,7 @@ $historial->execute();
 
 $historialResult = $historial->get_result();
 
-$colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
+$colores = ['#059669','#0d9488','#10b981','#0284c7','#6366f1','#8b5cf6'];
 ?>
 
 <?php include __DIR__ . '/../../includes/header.php'; ?>
@@ -47,8 +47,8 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
 
 <div class="topbar">
     <div class="topbar-left">
-        <h1>Historial Medico</h1>
-        <p>Todas tus citas registradas</p>
+        <h1>Historial Médico</h1>
+        <p>Registro completo de todas tus consultas pasadas y futuras</p>
     </div>
 
     <div class="topbar-right">
@@ -64,17 +64,15 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
 
 <div class="card-header">
     <div>
-        <h2>Historial de Citas</h2>
-        <p>Citas medicas del paciente</p>
+        <h2>Tus consultas registradas</h2>
+        <p>Historial detallado de atención médica</p>
     </div>
 </div>
 
 <?php $count = 0; while($h = $historialResult->fetch_assoc()): $count++;
 
 $ini = strtoupper(substr($h['doctor'],0,2));
-
 $color = $colores[crc32($h['doctor']) % count($colores)];
-
 $hora12 = date('h:i A', strtotime($h['hora']));
 
 ?>
@@ -86,27 +84,13 @@ $hora12 = date('h:i A', strtotime($h['hora']));
 </div>
 
 <div class="cita-info">
-
-    <div class="nombre">
-        <?= htmlspecialchars($h['doctor']) ?>
-    </div>
-
-    <div class="sub">
-        <?= htmlspecialchars($h['motivo'] ?? 'Consulta medica') ?>
-    </div>
-
+    <div class="nombre">Dr. <?= htmlspecialchars($h['doctor']) ?></div>
+    <div class="sub"><?= htmlspecialchars($h['motivo'] ?? 'Consulta médica general') ?></div>
 </div>
 
 <div class="cita-meta">
-
-    <span>
-        <?= date('d/m/Y', strtotime($h['fecha'])) ?>
-    </span>
-
-    <span>
-        <?= $hora12 ?>
-    </span>
-
+    <span><?= date('d/m/Y', strtotime($h['fecha'])) ?></span>
+    <span><?= $hora12 ?></span>
 </div>
 
 <span class="badge badge-info">
@@ -119,14 +103,11 @@ $hora12 = date('h:i A', strtotime($h['hora']));
 
 <?php if($count === 0): ?>
 
-<div class="empty-state">
-
-<div class="empty-icon" style="display:inline-flex; margin:0 auto 12px; justify-content:center; align-items:center;">
+<div class="empty-state" style="padding: 40px; text-align: center;">
+<div class="empty-icon" style="display:inline-flex; margin:0 auto 16px; justify-content:center; align-items:center;">
     <img src="<?= BASE_URL ?>/assets/img/svg/calendar.svg" width="40" height="40" style="filter:none; display:block;">
 </div>
-
-<p>No tienes citas registradas.</p>
-
+<p style="color: var(--muted); font-size: 15px;">Aún no cuentas con citas registradas en tu historial.</p>
 </div>
 
 <?php endif; ?>

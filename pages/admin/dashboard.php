@@ -4,17 +4,14 @@ require_once __DIR__ . '/../../config/config.php';
 requireRole('admin');
 require_once __DIR__ . '/../../includes/db.php';
 
-// Stats
 $stats = [];
 foreach (['usuarios','doctores','pacientes','citas'] as $t) {
     $r = $conn->query("SELECT COUNT(*) c FROM $t");
     $stats[$t] = $r ? $r->fetch_assoc()['c'] : 0;
 }
 
-// Citas hoy
 $hoy = $conn->query("SELECT COUNT(*) c FROM citas WHERE fecha = CURDATE()")->fetch_assoc()['c'];
 
-// Ultimas citas
 $citasRecientes = $conn->query("
     SELECT c.id, c.fecha, c.hora, c.estado,
            up.nombre AS paciente, ud.nombre AS doctor,
@@ -28,7 +25,6 @@ $citasRecientes = $conn->query("
     ORDER BY c.created_at DESC LIMIT 8
 ");
 
-// Pacientes recientes
 $pacientesRecientes = $conn->query("
     SELECT u.nombre, u.email, u.created_at
     FROM usuarios u
@@ -36,7 +32,7 @@ $pacientesRecientes = $conn->query("
     ORDER BY u.created_at DESC LIMIT 5
 ");
 
-$colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
+$colores = ['#059669','#0d9488','#10b981','#0284c7','#6366f1','#8b5cf6'];
 ?>
 <?php include __DIR__ . '/../../includes/header.php'; ?>
 
@@ -45,11 +41,10 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
 
   <div class="main">
 
-    <!-- Topbar -->
     <div class="topbar">
       <div class="topbar-left">
-        <h1>Panel Administrativo</h1>
-        <p>Administrador General</p>
+        <h1>Panel General</h1>
+        <p>Bienvenido al centro de control, aquí tienes un resumen de la actividad</p>
       </div>
       <div class="topbar-right">
         <div class="notif-btn">
@@ -62,7 +57,6 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
 
     <div class="content">
 
-      <!-- Stats -->
       <div class="stats-grid">
         <div class="stat-card">
           <div>
@@ -70,7 +64,7 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
               <img src="<?= BASE_URL ?>/assets/img/svg/sidebar-user.svg" width="22" height="22" alt="">
             </div>
             <div class="stat-value"><?= $stats['usuarios'] ?></div>
-            <div class="stat-label">Total Usuarios</div>
+            <div class="stat-label">Personas Registradas</div>
           </div>
         </div>
 
@@ -80,7 +74,7 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
               <img src="<?= BASE_URL ?>/assets/img/svg/sidebar-doctor.svg" width="22" height="22" alt="">
             </div>
             <div class="stat-value"><?= $stats['doctores'] ?></div>
-            <div class="stat-label">Total Doctores</div>
+            <div class="stat-label">Médicos en Equipo</div>
           </div>
         </div>
 
@@ -90,7 +84,7 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
               <img src="<?= BASE_URL ?>/assets/img/svg/users-total.svg" width="22" height="22" alt="">
             </div>
             <div class="stat-value"><?= $stats['pacientes'] ?></div>
-            <div class="stat-label">Total Pacientes</div>
+            <div class="stat-label">Pacientes Activos</div>
           </div>
         </div>
 
@@ -100,20 +94,18 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
               <img src="<?= BASE_URL ?>/assets/img/svg/sidebar-citas.svg" width="22" height="22" alt="">
             </div>
             <div class="stat-value"><?= $hoy ?></div>
-            <div class="stat-label">Citas del Dia</div>
+            <div class="stat-label">Citas para Hoy</div>
           </div>
         </div>
       </div>
 
-      <!-- Grid de tablas -->
       <div class="card-grid">
 
-        <!-- Citas recientes -->
         <div class="card">
           <div class="card-header">
             <div>
               <h2>Citas recientes</h2>
-              <p>Ultimas citas registradas</p>
+              <p>Últimos movimientos agendados en el hospital</p>
             </div>
             <a href="<?= BASE_URL ?>/pages/citas/ver.php" class="btn btn-outline btn-sm">Ver todas</a>
           </div>
@@ -122,9 +114,9 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
               <thead>
                 <tr>
                   <th>Paciente</th>
-                  <th>Doctor</th>
-                  <th>Fecha</th>
-                  <th>Estado</th>
+                  <th>Médico Asignado</th>
+                  <th>Fecha y Hora</th>
+                  <th>Estatus</th>
                 </tr>
               </thead>
               <tbody>
@@ -137,14 +129,14 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
                       <div class="table-avatar" style="background:<?= $colores[crc32($c['paciente']) % count($colores)] ?>;"><?= $ini ?></div>
                       <div>
                         <div class="td-primary"><?= htmlspecialchars($c['paciente']) ?></div>
-                        <div class="td-muted"><?= htmlspecialchars($c['especialidad'] ?? '') ?></div>
+                        <div class="td-muted"><?= htmlspecialchars($c['especialidad'] ?? 'Medicina General') ?></div>
                       </div>
                     </div>
                   </td>
                   <td><?= htmlspecialchars($c['doctor']) ?></td>
                   <td>
                     <div class="td-primary"><?= date('d/m/Y', strtotime($c['fecha'])) ?></div>
-                    <div class="td-muted"><?= $c['hora'] ?></div>
+                    <div class="td-muted"><?= $c['hora'] ?> hrs</div>
                   </td>
                   <td>
                     <?php
@@ -163,7 +155,7 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
                     <div class="empty-icon">
                       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     </div>
-                    <p>No hay citas registradas</p>
+                    <p>Aún no hay citas registradas en el sistema</p>
                   </div>
                 </td></tr>
               <?php endif; ?>
@@ -172,21 +164,20 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
           </div>
         </div>
 
-        <!-- Pacientes recientes -->
         <div class="card">
           <div class="card-header">
             <div>
-              <h2>Pacientes recientes</h2>
-              <p>Ultimos registros</p>
+              <h2>Nuevos pacientes</h2>
+              <p>Personas que acaban de unirse</p>
             </div>
-            <a href="<?= BASE_URL ?>/pages/admin/users.php" class="btn btn-outline btn-sm">Ver todos</a>
+            <a href="<?= BASE_URL ?>/pages/admin/users.php" class="btn btn-outline btn-sm">Ver lista</a>
           </div>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>Paciente</th>
-                  <th>Registro</th>
+                  <th>Fecha de alta</th>
                 </tr>
               </thead>
               <tbody>
@@ -219,13 +210,12 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
 </div>
 
 <style>
-  /* targetas */
   .stat-card-icon {
     width: 44px; height: 44px;
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 14px;
-    background: #fff;
+    background: #ecfdf5;
   }
 </style>
 

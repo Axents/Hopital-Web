@@ -5,6 +5,5 @@ function toggleTheme() {
   localStorage.setItem('tema', tema);
 }
 
-// Cargar tema guardado
 const temaGuardado = localStorage.getItem('tema');
 if (temaGuardado) document.documentElement.setAttribute('data-theme', temaGuardado);

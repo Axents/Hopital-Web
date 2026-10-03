@@ -36,7 +36,6 @@ $nav = match($rol) {
 ?>
 <aside class="sidebar">
 
-  <!-- Brand -->
   <div class="sidebar-brand">
     <div>
       <div class="sidebar-brand-text">Hospital Palacio de la salud</div>
@@ -44,7 +43,6 @@ $nav = match($rol) {
     </div>
   </div>
 
-  <!-- Nav -->
   <button onclick="toggleTheme()">Tema oscuro</button>
   <nav class="sidebar-nav">
     <div class="nav-section-label">Menu</div>
@@ -60,7 +58,6 @@ $nav = match($rol) {
     <?php endforeach; ?>
   </nav>
 
-  <!-- Footer -->
   <div class="sidebar-footer">
     <div class="sidebar-user">
       <div class="sidebar-avatar"><?= $inicial ?></div>

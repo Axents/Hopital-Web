@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Configuracion';
+$pageTitle = 'Configuración';
 require_once __DIR__ . '/../../config/config.php';
 requireRole('paciente');
 require_once __DIR__ . '/../../includes/db.php';
@@ -79,7 +79,7 @@ if(isset($_POST['guardar'])){
 
         $_SESSION['nombre'] = $nombre;
 
-        $success = 'Datos actualizados correctamente';
+        $success = 'Tus datos se han actualizado correctamente';
 
         $paciente['nombre'] = $nombre;
         $paciente['email'] = $email;
@@ -96,7 +96,7 @@ if(isset($_POST['guardar'])){
         }
 
     }else{
-        $error = 'Error al actualizar';
+        $error = 'Hubo un problema al actualizar tus datos. Inténtalo de nuevo.';
     }
 }
 
@@ -107,7 +107,7 @@ if(isset($_POST['password'])){
 
     if($nueva !== $confirmar){
 
-        $error = 'Las contraseñas no coinciden';
+        $error = 'Las contraseñas nuevas no coinciden';
 
     }else{
 
@@ -126,47 +126,12 @@ if(isset($_POST['password'])){
         );
 
         if($updatePass->execute()){
-            $success = 'Contraseña actualizada';
+            $success = 'Tu contraseña se actualizó con éxito';
         }else{
-            $error = 'Error al actualizar contraseña';
+            $error = 'No se pudo actualizar la contraseña';
         }
     }
 }
-
-$totalCitas = $conn->prepare("
-    SELECT COUNT(*) c
-    FROM citas
-    WHERE paciente_id = ?
-");
-
-$totalCitas->bind_param('i', $pid);
-$totalCitas->execute();
-
-$nCitas = $totalCitas->get_result()->fetch_assoc()['c'];
-
-$proximas = $conn->prepare("
-    SELECT COUNT(*) c
-    FROM citas
-    WHERE paciente_id = ?
-    AND fecha >= CURDATE()
-");
-
-$proximas->bind_param('i', $pid);
-$proximas->execute();
-
-$nProximas = $proximas->get_result()->fetch_assoc()['c'];
-
-$completadas = $conn->prepare("
-    SELECT COUNT(*) c
-    FROM citas
-    WHERE paciente_id = ?
-    AND estado = 'completada'
-");
-
-$completadas->bind_param('i', $pid);
-$completadas->execute();
-
-$nCompletadas = $completadas->get_result()->fetch_assoc()['c'];
 ?>
 
 <?php include __DIR__ . '/../../includes/header.php'; ?>
@@ -180,8 +145,8 @@ $nCompletadas = $completadas->get_result()->fetch_assoc()['c'];
 <div class="topbar">
 
     <div class="topbar-left">
-        <h1>Configuracion</h1>
-        <p>Administra tu cuenta</p>
+        <h1>Configuración</h1>
+        <p>Actualiza tu información personal y datos de contacto</p>
     </div>
 
     <div class="topbar-right">
@@ -194,14 +159,12 @@ $nCompletadas = $completadas->get_result()->fetch_assoc()['c'];
 
 <div class="content">
 
-<div class="card-grid" style="grid-template-columns:2fr 1fr;align-items:start;">
-
-<div class="card">
+<div class="card" style="max-width: 800px; margin: 0 auto;">
 
 <div class="card-header">
     <div>
-        <h2>Datos Personales</h2>
-        <p>Informacion personal del paciente</p>
+        <h2>Información Personal</h2>
+        <p>Modifica los campos necesarios para mantener tu expediente al día</p>
     </div>
 </div>
 
@@ -221,47 +184,44 @@ $nCompletadas = $completadas->get_result()->fetch_assoc()['c'];
 
 <form method="POST">
 
-<div class="form-group">
-<label>Nombre completo</label>
-
+<div class="form-group" style="margin-bottom: 20px;">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Nombre completo</label>
 <input type="text"
        name="nombre"
        class="form-control"
-       value="<?= htmlspecialchars($paciente['nombre']) ?>">
+       value="<?= htmlspecialchars($paciente['nombre']) ?>" required>
 </div>
 
-<div class="form-group">
-<label>Correo electronico</label>
-
+<div class="form-group" style="margin-bottom: 20px;">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Correo electrónico</label>
 <input type="email"
        name="email"
        class="form-control"
-       value="<?= htmlspecialchars($paciente['email']) ?>">
+       value="<?= htmlspecialchars($paciente['email']) ?>" required>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px; margin-bottom: 20px;">
 
 <div class="form-group">
-<label>Telefono</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Teléfono</label>
 <input type="text"
        name="telefono"
        class="form-control"
-       value="<?= htmlspecialchars($paciente['telefono'] ?? '') ?>">
+       value="<?= htmlspecialchars($paciente['telefono'] ?? '') ?>"
+       placeholder="Ej. 555-123-4567">
 </div>
 
 <div class="form-group">
-<label>Direccion</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Dirección</label>
 <input type="text"
        name="direccion"
        class="form-control"
-       value="<?= htmlspecialchars($paciente['direccion'] ?? '') ?>">
+       value="<?= htmlspecialchars($paciente['direccion'] ?? '') ?>"
+       placeholder="Calle, número, ciudad">
 </div>
 
 <div class="form-group">
-<label>Fecha de nacimiento</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Fecha de nacimiento</label>
 <input type="date"
        name="fecha_nacimiento"
        class="form-control"
@@ -269,39 +229,36 @@ $nCompletadas = $completadas->get_result()->fetch_assoc()['c'];
 </div>
 
 <div class="form-group">
-<label>Edad</label>
-
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Edad actual</label>
 <input type="text"
        class="form-control"
-       value="<?= $edad ?> años"
-       readonly>
+       value="<?= $edad ? $edad . ' años' : 'No calculada' ?>"
+       readonly style="background: #f1f5f9;">
 </div>
 
-<div class="form-group">
-<label>Tipo de sangre</label>
-
+<div class="form-group" style="grid-column: 1 / -1;">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Tipo de sangre</label>
 <input type="text"
        name="tipo_sangre"
        class="form-control"
-       value="<?= htmlspecialchars($paciente['tipo_sangre'] ?? '') ?>">
+       value="<?= htmlspecialchars($paciente['tipo_sangre'] ?? '') ?>"
+       placeholder="Ej. O+">
 </div>
 
-<div class="form-group">
-<label>Alergias</label>
-
+<div class="form-group" style="grid-column:1 / span 2;">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Alergias o padecimientos relevantes</label>
 <textarea name="alergias"
           class="form-control"
-          rows="3"><?= htmlspecialchars($paciente['alergias'] ?? '') ?></textarea>
+          rows="3"
+          placeholder="Menciona si eres alérgico a algún medicamento o sustancia"><?= htmlspecialchars($paciente['alergias'] ?? '') ?></textarea>
 </div>
 
 </div>
 
 <button type="submit"
         name="guardar"
-        class="btn btn-primary">
-
+        class="btn btn-primary" style="background: var(--emerald); border: none; padding: 12px 24px; border-radius: 50px; font-weight: 700; cursor: pointer;">
 Guardar cambios
-
 </button>
 
 </form>

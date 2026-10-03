@@ -39,22 +39,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pid) {
     $motivo    = trim($_POST['motivo'] ?? '');
 
     if (!$doctor_id || !$fecha || !$hora) {
-        $error = 'Completa todos los campos obligatorios.';
+        $error = 'Por favor completa todos los campos obligatorios.';
     } elseif (strtotime($fecha) < strtotime('today')) {
-        $error = 'La fecha no puede ser en el pasado.';
+        $error = 'La fecha elegida no puede ser en el pasado.';
     } else {
         $check = $conn->prepare("SELECT id FROM citas WHERE doctor_id=? AND fecha=? AND hora=? AND estado != 'cancelada'");
         $check->bind_param('iss', $doctor_id, $fecha, $hora);
         $check->execute();
         if ($check->get_result()->num_rows > 0) {
-            $error = 'Ese horario ya esta ocupado. Elige otra hora.';
+            $error = 'Lo sentimos, este horario ya se encuentra ocupado. Elige otra hora.';
         } else {
             $ins = $conn->prepare("INSERT INTO citas (paciente_id, doctor_id, fecha, hora, motivo) VALUES (?,?,?,?,?)");
             $ins->bind_param('iisss', $pid, $doctor_id, $fecha, $hora, $motivo);
             if ($ins->execute()) {
                 $success = true;
             } else {
-                $error = 'Error al guardar la cita.';
+                $error = 'Hubo un problema al guardar la cita. Inténtalo de nuevo.';
             }
         }
     }
@@ -72,7 +72,7 @@ $horas = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
     <div class="topbar">
       <div class="topbar-left">
         <h1>Agendar Cita</h1>
-        <p>Programa una nueva cita medica</p>
+        <p>Programa tu próxima consulta médica en pocos pasos</p>
       </div>
       <div class="topbar-right">
         <div class="topbar-avatar"><?= strtoupper(substr($_SESSION['nombre'],0,2)) ?></div>
@@ -81,16 +81,16 @@ $horas = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
 
     <div class="content">
       <?php if ($success): ?>
-      <div class="card" style="max-width:560px;">
+      <div class="card" style="max-width:560px; margin: 0 auto;">
         <div class="card-body" style="text-align:center;padding:48px 20px;">
-          <div style="width:64px;height:64px;background:#f0fdf4;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <div style="width:64px;height:64px;background:#ecfdf5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <h2 style="font-size:20px;font-weight:800;margin-bottom:8px;">Cita agendada</h2>
-          <p style="color:#64748b;font-size:14px;margin-bottom:24px;">Tu cita ha sido registrada exitosamente.</p>
-          <div style="display:flex;gap:10px;justify-content:center;">
-            <a href="<?= BASE_URL ?>/pages/citas/ver.php" class="btn btn-primary">Ver mis citas</a>
-            <a href="<?= BASE_URL ?>/pages/citas/agendar.php" class="btn btn-outline">Agendar otra</a>
+          <h2 style="font-size:22px;font-weight:800;margin-bottom:8px;color:var(--dark);">¡Cita agendada con éxito!</h2>
+          <p style="color:#64748b;font-size:15px;margin-bottom:28px;">Tu cita médica ha sido registrada correctamente en el sistema.</p>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <a href="<?= BASE_URL ?>/pages/citas/ver.php" class="btn btn-primary" style="background:var(--emerald); border-radius:50px; font-weight:700; padding: 12px 24px;">Ver mis citas</a>
+            <a href="<?= BASE_URL ?>/pages/citas/agendar.php" class="btn btn-outline" style="border-radius:50px; font-weight:700; padding: 12px 24px;">Agendar otra</a>
           </div>
         </div>
       </div>
@@ -98,17 +98,16 @@ $horas = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
       <?php else: ?>
       <div class="card-grid" style="grid-template-columns:1.2fr 0.8fr;">
 
-        <!-- Formulario -->
         <div class="card">
           <div class="card-header">
             <div>
-              <h2>Nueva cita</h2>
-              <p>Completa los datos para agendar</p>
+              <h2>Nueva cita médica</h2>
+              <p>Selecciona el especialista y el horario de tu preferencia</p>
             </div>
           </div>
           <div class="card-body">
             <?php if (!$pid): ?>
-            <div class="alert alert-danger">Tu cuenta no tiene perfil de paciente. Contacta al administrador.</div>
+            <div class="alert alert-danger">Tu cuenta actual no cuenta con un perfil de paciente activo. Por favor contacta al administrador.</div>
             <?php else: ?>
 
             <?php if ($error): ?>
@@ -116,33 +115,33 @@ $horas = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
             <?php endif; ?>
 
             <form method="POST">
-              <div class="form-group">
-                <label>Doctor *</label>
+              <div class="form-group" style="margin-bottom: 20px;">
+                <label style="font-weight: 700; color: var(--dark); display: block; margin-bottom: 8px;">Médico especialista *</label>
                 <select name="doctor_id" class="form-control" required>
-                  <option value="">— Selecciona un doctor —</option>
+                  <option value="">— Selecciona un especialista —</option>
                   <?php
                   $doctores->data_seek(0);
                   while ($d = $doctores->fetch_assoc()):
                   ?>
                   <option value="<?= $d['id'] ?>" <?= $d['id'] == $preDoctor ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($d['nombre']) ?>
+                    Dr. <?= htmlspecialchars($d['nombre']) ?>
                     <?= $d['especialidad'] ? '(' . $d['especialidad'] . ')' : '' ?>
                   </option>
                   <?php endwhile; ?>
                 </select>
               </div>
 
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom: 20px;">
                 <div class="form-group">
-                  <label>Fecha *</label>
+                  <label style="font-weight: 700; color: var(--dark); display: block; margin-bottom: 8px;">Fecha *</label>
                   <input type="date" name="fecha" class="form-control"
                          min="<?= date('Y-m-d') ?>" required
                          value="<?= htmlspecialchars($_POST['fecha'] ?? '') ?>">
                 </div>
                 <div class="form-group">
-                  <label>Hora *</label>
+                  <label style="font-weight: 700; color: var(--dark); display: block; margin-bottom: 8px;">Hora *</label>
                   <select name="hora" class="form-control" required>
-                    <option value="">— Hora —</option>
+                    <option value="">— Selecciona hora —</option>
                     <?php foreach ($horas as $h): ?>
                     <option value="<?= $h ?>" <?= ($_POST['hora'] ?? '') === $h ? 'selected' : '' ?>>
                       <?= date('h:i A', strtotime($h)) ?>
@@ -152,42 +151,41 @@ $horas = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
                 </div>
               </div>
 
-              <div class="form-group">
-                <label>Motivo de consulta</label>
+              <div class="form-group" style="margin-bottom: 24px;">
+                <label style="font-weight: 700; color: var(--dark); display: block; margin-bottom: 8px;">Motivo de la consulta</label>
                 <textarea name="motivo" class="form-control" rows="3"
-                          placeholder="Describe brevemente tu motivo de consulta..."><?= htmlspecialchars($_POST['motivo'] ?? '') ?></textarea>
+                          placeholder="Describe brevemente el motivo de tu visita..."><?= htmlspecialchars($_POST['motivo'] ?? '') ?></textarea>
               </div>
 
-              <div style="display:flex;gap:10px;">
-                <button type="submit" class="btn btn-primary">Confirmar cita</button>
-                <a href="<?= BASE_URL ?>/pages/paciente/dashboard.php" class="btn btn-outline">Cancelar</a>
+              <div style="display:flex;gap:12px;">
+                <button type="submit" class="btn btn-primary" style="background:var(--emerald); border-radius:50px; font-weight:700; padding: 12px 24px; border:none; color:black; cursor:pointer;">Confirmar cita</button>
+                <a href="<?= BASE_URL ?>/pages/paciente/dashboard.php" class="btn btn-outline" style="border-radius:50px; font-weight:700; padding: 12px 24px;">Cancelar</a>
               </div>
             </form>
             <?php endif; ?>
           </div>
         </div>
 
-        <!-- Info lateral -->
         <div class="card">
           <div class="card-header">
-            <div><h2>Doctores disponibles</h2></div>
+            <div><h2>Médicos disponibles</h2><p>Especialistas listos para atenderte</p></div>
           </div>
-          <div style="overflow-y:auto;max-height:420px;">
+          <div style="overflow-y:auto;max-height:420px; padding: 0 10px;">
             <?php
             $doctores->data_seek(0);
-            $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
+            $colores = ['#059669','#0d9488','#10b981','#0284c7','#6366f1','#8b5cf6'];
             $i = 0;
             while ($d = $doctores->fetch_assoc()):
               $ini = strtoupper(substr($d['nombre'], 0, 2));
               $color = $colores[$i++ % count($colores)];
             ?>
-            <div class="cita-row">
-              <div class="cita-avatar" style="background:<?= $color ?>;"><?= $ini ?></div>
-              <div class="cita-info">
-                <div class="nombre"><?= htmlspecialchars($d['nombre']) ?></div>
-                <div class="sub"><?= htmlspecialchars($d['especialidad'] ?? 'General') ?></div>
+            <div class="cita-row" style="align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+              <div class="cita-avatar" style="background:<?= $color ?>; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;"><?= $ini ?></div>
+              <div class="cita-info" style="flex: 1; margin-left: 12px;">
+                <div class="nombre" style="font-weight: 700; font-size: 14px; color: var(--dark);">Dr. <?= htmlspecialchars($d['nombre']) ?></div>
+                <div class="sub" style="font-size: 12px; color: #64748b;"><?= htmlspecialchars($d['especialidad'] ?? 'Medicina General') ?></div>
               </div>
-              <span class="badge badge-success">Disponible</span>
+              <span class="badge badge-success" style="background: #ecfdf5; color: #047857; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">Disponible</span>
             </div>
             <?php endwhile; ?>
           </div>

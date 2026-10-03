@@ -1,5 +1,4 @@
 <?php
-// <head> + apertura <body>
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/db.php';
 $pageTitle = $pageTitle ?? APP_NAME;

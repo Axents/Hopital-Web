@@ -21,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['rol']        = $user['rol'];
             redirect('pages/' . $user['rol'] . '/dashboard.php');
         } else {
-            $error = 'Correo o contraseña incorrectos.';
+            $error = 'El correo o la contraseña no coinciden, revísalos por favor.';
         }
     } else {
-        $error = 'Por favor completa todos los campos.';
+        $error = 'Faltan datos por llenar, completa los campos.';
     }
 }
 
@@ -44,36 +44,37 @@ if (isset($_GET['rol'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar sesión — Hospital Palacio de la salud</title>
+  <title>Iniciar sesión — Hospital Palacio de la Salud</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --blue: #2563eb;
-      --blue-dark: #1d4ed8;
-      --text: #0f172a;
-      --muted: #64748b;
+      --emerald: #059669;
+      --emerald-dark: #047857;
+      --emerald-light: #ecfdf5;
+      --teal: #0d9488;
+      --dark: #090d16;
+      --gray-muted: #64748b;
       --border: #e2e8f0;
-      --bg: #f8fafc;
+      --surface: #ffffff;
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       min-height: 100vh;
       display: flex;
-      background: var(--bg);
+      background: var(--surface);
     }
 
-    /* ── LADO IZQUIERDO ── */
     .left-panel {
       flex: 1;
-      background: #000;
+      background: var(--dark);
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      padding: 48px;
+      justify-content: space-between;
+      padding: 60px;
       position: relative;
       overflow: hidden;
       min-height: 100vh;
@@ -83,189 +84,152 @@ if (isset($_GET['rol'])) {
       content: '';
       position: absolute; inset: 0;
       background: url('<?= BASE_URL ?>/assets/img/img-login.jpg') center/cover no-repeat;
-      opacity: 0.75;
-    }
-
-    .left-content {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      height: 100%;
-    }
-
-    .left-brand {
-      display: flex; align-items: center; gap: 12px;
-      color: white; font-size: 18px; font-weight: 800;
-      margin-bottom: 32px;
+      opacity: 0.35;
     }
 
     .left-panel::after {
       content: '';
       position: absolute; inset: 0;
-      background: rgba(0, 0, 0, 0.35);
+      background: linear-gradient(135deg, rgba(9,13,22,0.95), rgba(5,150,105,0.4));
     }
 
-    .left-brand .logo {
-      width: 44px; height: 44px;
-      background: rgba(255,255,255,.2);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; backdrop-filter: blur(10px);
+    .left-content { position: relative; z-index: 1; }
+
+    .left-brand {
+      display: flex; align-items: center; gap: 12px;
+      color: white; font-size: 20px; font-weight: 800;
     }
 
     .left-hero {
       position: relative; z-index: 1;
       color: white;
+      margin-bottom: 40px;
     }
     .left-hero h2 {
-      font-size: clamp(28px, 3vw, 42px);
+      font-size: clamp(32px, 3.5vw, 48px);
       font-weight: 800; line-height: 1.15;
       letter-spacing: -1px;
       margin-bottom: 16px;
     }
     .left-hero p {
       font-size: 16px;
-      opacity: .8;
-      line-height: 1.6;
-      max-width: 380px;
+      color: #94a3b8;
+      line-height: 1.7;
+      max-width: 420px;
     }
 
-    .left-stats {
-      position: relative; z-index: 1;
-      display: flex; gap: 24px;
-    }
-    .ls-item {
-      background: rgba(255,255,255,.15);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 14px;
-      padding: 16px 20px;
-      color: white;
-    }
-    .ls-item .num { font-size: 22px; font-weight: 800; }
-    .ls-item .lbl { font-size: 12px; opacity: .75; margin-top: 2px; }
-
-    /* ── LADO DERECHO ── */
     .right-panel {
-      width: 480px;
+      width: 520px;
       flex-shrink: 0;
       background: white;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 48px;
+      padding: 60px;
       overflow-y: auto;
     }
 
     .back-link {
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 13px; color: var(--muted);
-      margin-bottom: 40px;
+      font-size: 13px; font-weight: 600; color: var(--gray-muted);
+      margin-bottom: 36px;
       transition: color .2s;
       text-decoration: none;
     }
-    .back-link:hover { color: var(--blue); }
+    .back-link:hover { color: var(--emerald); }
 
     .form-header { margin-bottom: 32px; }
     .form-header h1 {
-      font-size: 28px; font-weight: 800;
-      letter-spacing: -.5px; color: var(--text);
-      margin-bottom: 6px;
+      font-size: 30px; font-weight: 800;
+      letter-spacing: -1px; color: var(--dark);
+      margin-bottom: 8px;
     }
-    .form-header p { font-size: 14px; color: var(--muted); }
+    .form-header p { font-size: 15px; color: var(--gray-muted); }
 
     .alert {
-      padding: 12px 16px;
-      border-radius: 10px;
+      padding: 14px 18px;
+      border-radius: 12px;
       font-size: 13px;
-      margin-bottom: 20px;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #b91c1c;
+      font-weight: 600;
+      margin-bottom: 24px;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #be123c;
     }
 
-    .form-group { margin-bottom: 18px; }
+    .form-group { margin-bottom: 20px; }
     .form-group label {
       display: block;
-      font-size: 13px; font-weight: 600;
-      color: var(--text); margin-bottom: 7px;
+      font-size: 13px; font-weight: 700;
+      color: var(--dark); margin-bottom: 8px;
     }
 
-    .input-wrap {
-      position: relative;
-    }
-    .input-icon {
-      position: absolute; left: 14px; top: 50%;
-      transform: translateY(-50%);
-      font-size: 16px; opacity: .4;
-      pointer-events: none;
-    }
     .form-control {
       width: 100%;
-      padding: 12px 14px 12px 42px;
+      padding: 14px 18px;
       border: 1.5px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 14px;
       font-family: inherit;
-      color: var(--text);
-      background: var(--bg);
-      transition: border-color .2s, box-shadow .2s, background .2s;
+      color: var(--dark);
+      background: #fafafa;
+      transition: all .2s ease;
     }
     .form-control:focus {
       outline: none;
-      border-color: var(--blue);
+      border-color: var(--emerald);
       background: white;
-      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+      box-shadow: 0 0 0 4px rgba(5,150,105,.1);
     }
 
     .form-extras {
       display: flex; align-items: center;
       justify-content: space-between;
-      margin-bottom: 22px;
+      margin-bottom: 24px;
     }
     .remember {
       display: flex; align-items: center; gap: 8px;
-      font-size: 13px; color: var(--muted); cursor: pointer;
+      font-size: 13px; font-weight: 500; color: var(--gray-muted); cursor: pointer;
     }
-    .remember input { accent-color: var(--blue); }
-    .forgot { font-size: 13px; color: var(--blue); font-weight: 600; text-decoration: none; }
+    .remember input { accent-color: var(--emerald); width: 16px; height: 16px; }
+    .forgot { font-size: 13px; color: var(--emerald); font-weight: 700; text-decoration: none; }
     .forgot:hover { text-decoration: underline; }
 
     .btn-login {
       width: 100%;
-      padding: 13px;
-      background: linear-gradient(135deg, var(--blue) 0%, #0ea5e9 100%);
+      padding: 15px;
+      background: var(--dark);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 50px;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       font-family: inherit;
       cursor: pointer;
-      transition: all .2s;
-      margin-bottom: 20px;
+      transition: all .3s ease;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 20px rgba(9,13,22,.15);
     }
     .btn-login:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(37,99,235,.4);
+      background: var(--emerald);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(5,150,105,.25);
     }
 
     .divider {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 20px;
-      font-size: 13px; color: var(--muted);
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 24px;
+      font-size: 13px; color: var(--gray-muted); font-weight: 500;
     }
     .divider::before, .divider::after {
       content: ''; flex: 1;
       height: 1px; background: var(--border);
     }
 
-    /* Acceso rápido por rol */
-    .quick-access { margin-bottom: 28px; }
+    .quick-access { margin-bottom: 32px; }
     .quick-label {
-      font-size: 12px; color: var(--muted);
+      font-size: 12px; color: var(--gray-muted); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
       text-align: center; margin-bottom: 12px;
     }
     .quick-btns {
@@ -273,66 +237,70 @@ if (isset($_GET['rol'])) {
       gap: 10px;
     }
     .quick-btn {
-      padding: 10px 8px;
+      padding: 10px;
       border: 1.5px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       background: white;
-      font-size: 13px; font-weight: 600;
-      color: var(--blue);
+      font-size: 13px; font-weight: 700;
+      color: var(--dark);
       cursor: pointer;
       font-family: inherit;
-      transition: all .2s;
+      transition: all .2s ease;
       text-align: center;
       text-decoration: none;
       display: block;
     }
     .quick-btn:hover {
-      border-color: var(--blue);
-      background: #eff6ff;
+      border-color: var(--emerald);
+      color: var(--emerald);
+      background: var(--emerald-light);
     }
     .quick-btn.active {
-      border-color: var(--blue);
-      background: #eff6ff;
+      border-color: var(--emerald);
+      background: var(--emerald);
+      color: white;
     }
 
     .register-link {
       text-align: center;
-      font-size: 13px; color: var(--muted);
-      padding-top: 20px;
+      font-size: 14px; color: var(--gray-muted);
+      padding-top: 24px;
       border-top: 1px solid var(--border);
     }
-    .register-link a { color: var(--blue); font-weight: 700; text-decoration: none; }
+    .register-link a { color: var(--emerald); font-weight: 800; text-decoration: none; }
     .register-link a:hover { text-decoration: underline; }
 
     @media (max-width: 900px) {
       .left-panel { display: none; }
-      .right-panel { width: 100%; min-height: 100vh; }
+      .right-panel { width: 100%; min-height: 100vh; padding: 30px; }
     }
   </style>
 </head>
 <body>
 
-<!-- PANEL IZQUIERDO -->
 <div class="left-panel">
   <div class="left-content">
     <div class="left-brand">
-      Hospital Palacio de la salud
+      Hospital Palacio de la Salud
     </div>
   </div>
 
   <div class="left-hero left-content">
-    <h2>Tu salud en las mejores manos</h2>
-    <p>Accede a tu cuenta y gestiona tus citas médicas, historial clínico y mucho más desde un solo lugar.</p>
+    <h2>Qué bueno verte por aquí</h2>
+    <p>Entra a tu espacio personal para revisar tus citas agendadas, consultar tus recetas o checar cualquier detalle de tus consultas sin complicaciones.</p>
+  </div>
+  
+  <div class="left-content" style="font-size: 13px; color: #64748b;">
+    Hospital Palacio de la Salud.
   </div>
 </div>
 
-<!-- PANEL DERECHO -->
 <div class="right-panel">
-  <a href="<?= BASE_URL ?>/index.php" class="back-link">← Volver al inicio</a>
+  <a href="<?= BASE_URL ?>/index.php" class="back-link">← Regresar a la página principal</a>
 
   <div class="form-header">
-    <h1>Bienvenido</h1>
-    <p>Ingresa a tu cuenta para continuar</p>
+    <h1>Iniciar sesión</h1>
+    <p>Escribe tus datos para entrar al sistema</p>
   </div>
 
   <?php if ($error): ?>
@@ -341,36 +309,32 @@ if (isset($_GET['rol'])) {
 
   <form method="POST">
     <div class="form-group">
-      <label for="email">Correo Electrónico</label>
-      <div class="input-wrap">
-        <input type="email" id="email" name="email" class="form-control"
-               placeholder="correo@ejemplo.com" required
-               value="<?= htmlspecialchars($quickEmail ?: ($_POST['email'] ?? '')) ?>">
-      </div>
+      <label for="email">Tu correo electrónico</label>
+      <input type="email" id="email" name="email" class="form-control"
+             placeholder="tucorreo@ejemplo.com" required
+             value="<?= htmlspecialchars($quickEmail ?: ($_POST['email'] ?? '')) ?>">
     </div>
 
     <div class="form-group">
-      <label for="password">Contraseña</label>
-      <div class="input-wrap">
-        <input type="password" id="password" name="password" class="form-control"
-               placeholder="••••••••" required>
-      </div>
+      <label for="password">Tu contraseña</label>
+      <input type="password" id="password" name="password" class="form-control"
+             placeholder="••••••••" required>
     </div>
 
     <div class="form-extras">
       <label class="remember">
-        <input type="checkbox" name="remember"> Recordarme
+        <input type="checkbox" name="remember"> Recordar mis datos
       </label>
-      <a href="#" class="forgot">¿Olvidaste tu contraseña?</a>
+      <a href="#" class="forgot">¿No la recuerdas?</a>
     </div>
 
-    <button type="submit" class="btn-login">Iniciar Sesión</button>
+    <button type="submit" class="btn-login">Entrar a mi cuenta</button>
   </form>
 
-  <div class="divider">O continúa con</div>
+  <div class="divider">O prueba directa</div>
 
   <div class="quick-access">
-    <div class="quick-label">Acceso rápido:</div>
+    <div class="quick-label">Entrar rápido como:</div>
     <div class="quick-btns">
       <a href="?rol=paciente" class="quick-btn <?= ($_GET['rol'] ?? '') === 'paciente' ? 'active' : '' ?>">Paciente</a>
       <a href="?rol=doctor"   class="quick-btn <?= ($_GET['rol'] ?? '') === 'doctor'   ? 'active' : '' ?>">Doctor</a>
@@ -379,7 +343,7 @@ if (isset($_GET['rol'])) {
   </div>
 
   <div class="register-link">
-    ¿No tienes una cuenta? <a href="<?= BASE_URL ?>/register.php">Regístrate aquí</a>
+    ¿Todavía no tienes cuenta? <a href="<?= BASE_URL ?>/register.php">Crea una aquí</a>
   </div>
 </div>
 

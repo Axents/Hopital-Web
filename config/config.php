@@ -1,11 +1,9 @@
 <?php
-// constantes, funciones globales, session_start
 session_start();
 require_once __DIR__ . '/database.php';
 
 define('APP_NAME', 'Hospital Web');
-define('BASE_URL', 'http://localhost:8000');
-
+define('BASE_URL', 'http://localhost/Hospital-Web/Hospital-Web');
 function redirect($url) {
     header("Location: " . BASE_URL . "/" . $url);
     exit;

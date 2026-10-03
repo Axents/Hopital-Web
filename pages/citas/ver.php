@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Mis Citas';
+$pageTitle = 'Gestión de Citas';
 require_once __DIR__ . '/../../config/config.php';
 requireLogin();
 require_once __DIR__ . '/../../includes/db.php';
@@ -58,7 +58,7 @@ if ($rol === 'paciente') {
 }
 $citas->execute();
 $citasResult = $citas->get_result();
-$colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
+$colores = ['#059669','#0d9488','#10b981','#0284c7','#6366f1','#8b5cf6'];
 ?>
 <?php include __DIR__ . '/../../includes/header.php'; ?>
 
@@ -68,8 +68,8 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
   <div class="main">
     <div class="topbar">
       <div class="topbar-left">
-        <h1><?= $rol === 'admin' ? 'Todas las Citas' : 'Mis Citas' ?></h1>
-        <p><?= $rol === 'admin' ? 'Gestion de citas del sistema' : 'Historial de tus citas medicas' ?></p>
+        <h1><?= $rol === 'admin' ? 'Control de Citas' : 'Mis Citas' ?></h1>
+        <p><?= $rol === 'admin' ? 'Revisa y administra todas las citas del hospital' : 'Historial y seguimiento de tus consultas médicas' ?></p>
       </div>
       <div class="topbar-right">
         <div class="notif-btn">
@@ -84,13 +84,13 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
 
       <?php if ($rol === 'paciente'): ?>
       <div style="margin-bottom:20px;">
-        <a href="<?= BASE_URL ?>/pages/citas/agendar.php" class="btn btn-primary">+ Nueva Cita</a>
+        <a href="<?= BASE_URL ?>/pages/citas/agendar.php" class="btn btn-primary" style="background:var(--emerald); border-radius:50px; font-weight:700; padding: 12px 24px;">+ Agendar Nueva Cita</a>
       </div>
       <?php endif; ?>
 
       <div class="card">
         <div class="card-header">
-          <div><h2>Listado de citas</h2></div>
+          <div><h2>Listado general de citas</h2></div>
         </div>
         <div class="table-wrap">
           <table>
@@ -98,9 +98,9 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
               <tr>
                 <?php if ($rol === 'admin'): ?>
                 <th>Paciente</th>
-                <th>Doctor</th>
+                <th>Médico</th>
                 <?php elseif ($rol === 'paciente'): ?>
-                <th>Doctor</th>
+                <th>Médico</th>
                 <?php else: ?>
                 <th>Paciente</th>
                 <?php endif; ?>
@@ -108,14 +108,14 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
                 <th>Fecha</th>
                 <th>Hora</th>
                 <th>Motivo</th>
-                <th>Estado</th>
+                <th>Estatus</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
             <?php $count = 0; while ($c = $citasResult->fetch_assoc()): $count++;
               $map = ['pendiente'=>'badge-warning','confirmada'=>'badge-success','cancelada'=>'badge-danger','completada'=>'badge-info'];
-              $estadoLabel = ['pendiente'=>'Pendiente','confirmada'=>'Confirmada','cancelada'=>'Cancelada','completada'=>'Completada'];
+              $estadoLabel = ['pendiente'=>'Pendiente','confirmada'=>'Confirmada','cancelada'=>'Cancelada','completada'=>'Atendida'];
               $persona = $rol === 'paciente' ? ($c['doctor'] ?? '') : ($c['paciente'] ?? ($c['doctor'] ?? ''));
               $ini = strtoupper(substr($persona, 0, 2));
               $color = $colores[crc32($persona) % count($colores)];
@@ -128,12 +128,12 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
                     <div class="td-primary"><?= htmlspecialchars($c['paciente']) ?></div>
                   </div>
                 </td>
-                <td><?= htmlspecialchars($c['doctor']) ?></td>
+                <td>Dr. <?= htmlspecialchars($c['doctor']) ?></td>
                 <?php elseif ($rol === 'paciente'): ?>
                 <td>
                   <div class="td-user">
                     <div class="table-avatar" style="background:<?= $color ?>;"><?= $ini ?></div>
-                    <div class="td-primary"><?= htmlspecialchars($c['doctor']) ?></div>
+                    <div class="td-primary">Dr. <?= htmlspecialchars($c['doctor']) ?></div>
                   </div>
                 </td>
                 <?php else: ?>
@@ -144,20 +144,16 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
                   </div>
                 </td>
                 <?php endif; ?>
-                <td><?= htmlspecialchars($c['especialidad'] ?? '—') ?></td>
+                <td><?= htmlspecialchars($c['especialidad'] ?? 'Medicina General') ?></td>
                 <td><?= date('d/m/Y', strtotime($c['fecha'])) ?></td>
                 <td><?= date('h:i A', strtotime($c['hora'])) ?></td>
-                <td><div class="td-muted"><?= htmlspecialchars(substr($c['motivo'] ?? '—', 0, 30)) ?></div></td>
+                <td><div class="td-muted"><?= htmlspecialchars(substr($c['motivo'] ?? 'Consulta general', 0, 30)) ?></div></td>
                 <td><span class="badge <?= $map[$c['estado']] ?? 'badge-gray' ?>"><?= $estadoLabel[$c['estado']] ?? ucfirst($c['estado']) ?></span></td>
                 <td>
-                  <?php if ($c['estado'] === 'pendiente' && $rol === 'paciente'): ?>
+                  <?php if ($c['estado'] === 'pendiente' && ($rol === 'paciente' || $rol === 'admin')): ?>
                   <a href="<?= BASE_URL ?>/pages/citas/cancelar.php?id=<?= $c['id'] ?>"
-                     class="btn btn-danger btn-sm"
-                     onclick="return confirm('Cancelar esta cita?')">Cancelar</a>
-                  <?php elseif ($rol === 'admin'): ?>
-                  <a href="<?= BASE_URL ?>/pages/citas/cancelar.php?id=<?= $c['id'] ?>"
-                     class="btn btn-danger btn-sm"
-                     onclick="return confirm('Cancelar esta cita?')">Cancelar</a>
+                     class="btn btn-danger btn-sm" style="background:#fff1f2; color:#be123c; border:1px solid #fecdd3; border-radius:8px; padding:6px 12px; font-weight:600;"
+                     onclick="return confirm('¿Seguro que deseas cancelar esta cita?')">Cancelar</a>
                   <?php else: ?>
                   <span class="td-muted">—</span>
                   <?php endif; ?>
@@ -166,11 +162,11 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
             <?php endwhile; ?>
             <?php if ($count === 0): ?>
               <tr><td colspan="8">
-                <div class="empty-state">
-                  <div class="empty-icon">
+                <div class="empty-state" style="padding: 40px; text-align: center;">
+                  <div class="empty-icon" style="margin-bottom: 12px;">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                   </div>
-                  <p>No hay citas registradas</p>
+                  <p style="color: #64748b;">No hay citas registradas por el momento</p>
                 </div>
               </td></tr>
             <?php endif; ?>

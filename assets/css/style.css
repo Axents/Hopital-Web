@@ -1,28 +1,22 @@
-/* Disenio general de la pagina */
-
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Colores principales */
   --blue:        #2563eb;
   --blue-dark:   #1d4ed8;
   --blue-light:  #eff6ff;
   --blue-mid:    #3b82f6;
 
-  /* Texto */
   --text:        #0f172a;
   --text-2:      #334155;
   --muted:       #64748b;
   --muted-light: #94a3b8;
 
-  /* Superficies */
   --bg:          #f8fafc;
   --bg-2:        #f1f5f9;
   --surface:     #ffffff;
   --border:      #e2e8f0;
   --border-2:    #cbd5e1;
 
-  /* Semánticos */
   --success:     #16a34a;
   --success-bg:  #dcfce7;
   --warning:     #d97706;
@@ -34,21 +28,18 @@
   --purple:      #7c3aed;
   --purple-bg:   #f3e8ff;
 
-  /* Layout */
   --sidebar-w:   240px;
   --topbar-h:    64px;
   --radius:      12px;
   --radius-sm:   8px;
   --radius-lg:   16px;
 
-  /* Sombras */
   --shadow-sm:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
   --shadow:      0 4px 6px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.04);
   --shadow-md:   0 10px 25px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.04);
   --shadow-lg:   0 20px 40px rgba(0,0,0,.1);
 }
 
-/* ── RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
@@ -67,13 +58,11 @@ a:hover { text-decoration: underline; }
 
 img { max-width: 100%; display: block; }
 
-/* ── LAYOUT PRINCIPAL ── */
 .layout {
   display: flex;
   min-height: 100vh;
 }
 
-/* ── SIDEBAR ── */
 .sidebar {
   width: var(--sidebar-w);
   background: #0f172a;
@@ -212,7 +201,6 @@ img { max-width: 100%; display: block; }
 }
 .logout-btn:hover { color: #dc2626; text-decoration: none; }
 
-/* ── MAIN ── */
 .main {
   flex: 1;
   margin-left: var(--sidebar-w);
@@ -221,7 +209,6 @@ img { max-width: 100%; display: block; }
   min-height: 100vh;
 }
 
-/* ── TOPBAR ── */
 .topbar {
   height: var(--topbar-h);
   background: var(--surface);
@@ -285,13 +272,11 @@ img { max-width: 100%; display: block; }
   cursor: pointer;
 }
 
-/* ── CONTENT ── */
 .content {
   padding: 28px;
   flex: 1;
 }
 
-/* ── STAT CARDS ── */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -360,7 +345,6 @@ img { max-width: 100%; display: block; }
   background: var(--danger-bg);
 }
 
-/* ── CARDS ── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -398,7 +382,6 @@ img { max-width: 100%; display: block; }
   margin-bottom: 20px;
 }
 
-/* ── TABLES ── */
 .table-wrap { overflow-x: auto; }
 
 table {
@@ -441,7 +424,6 @@ tbody tr:hover { background: var(--bg); }
   font-size: 12px !important;
 }
 
-/* Avatar en tabla */
 .table-avatar {
   width: 36px; height: 36px;
   border-radius: 50%;
@@ -454,7 +436,6 @@ tbody tr:hover { background: var(--bg); }
   display: flex; align-items: center; gap: 10px;
 }
 
-/* ── BADGES ── */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -480,7 +461,6 @@ tbody tr:hover { background: var(--bg); }
 .badge-purple  { background: var(--purple-bg);  color: var(--purple); }
 .badge-gray    { background: var(--bg-2);       color: var(--muted); }
 
-/* ── BUTTONS ── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -564,7 +544,6 @@ tbody tr:hover { background: var(--bg); }
   justify-content: center;
 }
 
-/* ── FORMS ── */
 .form-group { margin-bottom: 18px; }
 
 .form-group label {
@@ -609,7 +588,6 @@ textarea.form-control { resize: vertical; min-height: 90px; }
   margin-top: 5px;
 }
 
-/* ── ALERTS ── */
 .alert {
   padding: 13px 16px;
   border-radius: var(--radius-sm);
@@ -625,7 +603,6 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 .alert-warning { background: var(--warning-bg); border: 1px solid #fde68a; color: #b45309; }
 .alert-info    { background: var(--info-bg);    border: 1px solid #bae6fd; color: #0369a1; }
 
-/* ── CITA ROWS (estilo imagen 3 y 4) ── */
 .cita-row {
   display: flex;
   align-items: center;
@@ -663,7 +640,6 @@ textarea.form-control { resize: vertical; min-height: 90px; }
   display: flex; align-items: center; gap: 5px;
 }
 
-/* ── EMPTY STATE ── */
 .empty-state {
   text-align: center;
   padding: 48px 20px;
@@ -678,7 +654,6 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 
 .empty-state p { font-size: 14px; }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .card-grid { grid-template-columns: 1fr; }
 }
@@ -704,4 +679,3 @@ textarea.form-control { resize: vertical; min-height: 90px; }
   .stats-grid { grid-template-columns: 1fr; }
 }
 
-/* pendiente modo oscuro en todas las paginas incluye el sidebar */

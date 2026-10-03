@@ -12,17 +12,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pass2  = $_POST['password2'] ?? '';
 
     if (!$nombre || !$email || !$pass) {
-        $error = 'Todos los campos son obligatorios.';
+        $error = 'Por favor llena todos los espacios obligatorios.';
     } elseif ($pass !== $pass2) {
-        $error = 'Las contraseñas no coinciden.';
+        $error = 'Las contraseñas no coinciden, revísalas por favor.';
     } elseif (strlen($pass) < 6) {
-        $error = 'La contraseña debe tener al menos 6 caracteres.';
+        $error = 'La contraseña es muy corta, usa al menos 6 caracteres.';
     } else {
         $check = $conn->prepare("SELECT id FROM usuarios WHERE email = ?");
         $check->bind_param('s', $email);
         $check->execute();
         if ($check->get_result()->num_rows > 0) {
-            $error = 'Este correo ya está registrado.';
+            $error = 'Este correo ya se encuentra registrado en el sistema.';
         } else {
             $hash = password_hash($pass, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, 'paciente')");
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $p->execute();
                 $success = true;
             } else {
-                $error = 'Error al registrar. Intenta de nuevo.';
+                $error = 'Hubo un problema al registrarte. Inténtalo de nuevo.';
             }
         }
     }
@@ -45,36 +45,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro — Hospital Web</title>
+  <title>Regístrate — Hospital Palacio de la Salud</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --blue: #2563eb;
-      --blue-dark: #1d4ed8;
-      --text: #0f172a;
-      --muted: #64748b;
+      --emerald: #059669;
+      --emerald-dark: #047857;
+      --emerald-light: #ecfdf5;
+      --teal: #0d9488;
+      --dark: #090d16;
+      --gray-muted: #64748b;
       --border: #e2e8f0;
-      --bg: #f8fafc;
+      --surface: #ffffff;
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       min-height: 100vh;
       display: flex;
-      background: var(--bg);
+      background: var(--surface);
     }
 
-    /* ── LADO IZQUIERDO ── */
     .left-panel {
       flex: 1;
-      background: #000;
+      background: var(--dark);
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      padding: 48px;
+      justify-content: space-between;
+      padding: 60px;
       position: relative;
       overflow: hidden;
       min-height: 100vh;
@@ -84,103 +85,92 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       content: '';
       position: absolute; inset: 0;
       background: url('<?= BASE_URL ?>/assets/img/img-register.jpg') center/cover no-repeat;
-      opacity: 1;
+      opacity: 0.35;
     }
 
     .left-panel::after {
       content: '';
       position: absolute; inset: 0;
-      background: rgba(0, 0, 0, 0.45);
+      background: linear-gradient(135deg, rgba(9,13,22,0.95), rgba(5,150,105,0.4));
     }
 
-    .left-content {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      height: 100%;
-    }
+    .left-content { position: relative; z-index: 1; }
 
     .left-brand {
       display: flex; align-items: center; gap: 12px;
-      color: white; font-size: 18px; font-weight: 800;
-      margin-bottom: 32px;
+      color: white; font-size: 20px; font-weight: 800;
     }
 
     .left-hero {
       position: relative; z-index: 1;
       color: white;
+      margin-bottom: 40px;
     }
     .left-hero h2 {
-      font-size: clamp(28px, 3vw, 42px);
+      font-size: clamp(32px, 3.5vw, 48px);
       font-weight: 800; line-height: 1.15;
       letter-spacing: -1px;
       margin-bottom: 16px;
     }
     .left-hero p {
       font-size: 16px; opacity: .8;
-      line-height: 1.6; max-width: 380px;
+      line-height: 1.7; max-width: 420px; color: #94a3b8;
     }
 
-    /* ── LADO DERECHO ── */
     .right-panel {
-      width: 480px;
+      width: 520px;
       flex-shrink: 0;
       background: white;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 48px;
+      padding: 60px;
       overflow-y: auto;
     }
 
     .back-link {
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 13px; color: var(--muted);
-      margin-bottom: 40px;
+      font-size: 13px; font-weight: 600; color: var(--gray-muted);
+      margin-bottom: 36px;
       transition: color .2s; text-decoration: none;
     }
-    .back-link:hover { color: var(--blue); }
+    .back-link:hover { color: var(--emerald); }
 
     .form-header { margin-bottom: 32px; }
     .form-header h1 {
-      font-size: 28px; font-weight: 800;
-      letter-spacing: -.5px; color: var(--text); margin-bottom: 6px;
+      font-size: 30px; font-weight: 800;
+      letter-spacing: -1px; color: var(--dark); margin-bottom: 8px;
     }
-    .form-header p { font-size: 14px; color: var(--muted); }
+    .form-header p { font-size: 15px; color: var(--gray-muted); }
 
     .alert {
-      padding: 12px 16px; border-radius: 10px;
-      font-size: 13px; margin-bottom: 20px;
+      padding: 14px 18px; border-radius: 12px;
+      font-size: 13px; font-weight: 600; margin-bottom: 24px;
     }
-    .alert-danger  { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
-    .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+    .alert-danger  { background: #fff1f2; border: 1px solid #fecdd3; color: #be123c; }
+    .alert-success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; }
 
-    .form-group { margin-bottom: 18px; }
+    .form-group { margin-bottom: 20px; }
     .form-group label {
-      display: block; font-size: 13px; font-weight: 600;
-      color: var(--text); margin-bottom: 7px;
+      display: block; font-size: 13px; font-weight: 700;
+      color: var(--dark); margin-bottom: 8px;
     }
-
-    .input-wrap { position: relative; }
 
     .form-control {
       width: 100%;
-      padding: 12px 14px;
+      padding: 14px 18px;
       border: 1.5px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 14px; font-family: inherit;
-      color: var(--text); background: var(--bg);
-      transition: border-color .2s, box-shadow .2s, background .2s;
+      color: var(--dark); background: #fafafa;
+      transition: all .2s ease;
     }
     .form-control:focus {
-      outline: none; border-color: var(--blue);
+      outline: none; border-color: var(--emerald);
       background: white;
-      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+      box-shadow: 0 0 0 4px rgba(5,150,105,.1);
     }
 
-    /* Indicador de fortaleza */
     .strength-bar {
       height: 4px; background: var(--border);
       border-radius: 2px; overflow: hidden;
@@ -191,77 +181,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       transition: width .3s, background .3s;
       width: 0%;
     }
-    .strength-text { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .strength-text { font-size: 12px; color: var(--gray-muted); margin-top: 6px; font-weight: 600; }
 
     .btn-register {
-      width: 100%; padding: 13px;
-      background: linear-gradient(135deg, var(--blue) 0%, #0ea5e9 100%);
-      color: white; border: none; border-radius: 10px;
-      font-size: 15px; font-weight: 700; font-family: inherit;
-      cursor: pointer; transition: all .2s;
-      margin-bottom: 20px; margin-top: 8px;
+      width: 100%; padding: 15px;
+      background: var(--dark);
+      color: white; border: none; border-radius: 50px;
+      font-size: 15px; font-weight: 800; font-family: inherit;
+      cursor: pointer; transition: all .3s ease;
+      margin-bottom: 24px; margin-top: 10px;
+      box-shadow: 0 10px 20px rgba(9,13,22,.15);
     }
     .btn-register:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(37,99,235,.4);
-    }
-
-    .divider {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 20px; font-size: 13px; color: var(--muted);
-    }
-    .divider::before, .divider::after {
-      content: ''; flex: 1; height: 1px; background: var(--border);
+      background: var(--emerald);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(5,150,105,.25);
     }
 
     .login-link {
-      text-align: center; font-size: 13px; color: var(--muted);
-      padding-top: 20px; border-top: 1px solid var(--border);
+      text-align: center; font-size: 14px; color: var(--gray-muted);
+      padding-top: 24px; border-top: 1px solid var(--border);
     }
-    .login-link a { color: var(--blue); font-weight: 700; text-decoration: none; }
+    .login-link a { color: var(--emerald); font-weight: 800; text-decoration: none; }
     .login-link a:hover { text-decoration: underline; }
 
-    /* Success */
-    .success-state { text-align: center; padding: 20px 0; }
+    .success-state { text-align: center; padding: 30px 0; }
     .success-icon {
-      width: 64px; height: 64px;
-      background: #f0fdf4; border-radius: 50%;
+      width: 72px; height: 72px;
+      background: var(--emerald-light); border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 20px;
     }
-    .success-icon svg { width: 32px; height: 32px; stroke: #16a34a; }
-    .success-state h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
-    .success-state p { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .success-icon svg { width: 36px; height: 36px; stroke: var(--emerald); }
+    .success-state h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: var(--dark); }
+    .success-state p { font-size: 15px; color: var(--gray-muted); margin-bottom: 30px; line-height: 1.6; }
     .btn-goto {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 12px 24px; background: var(--blue); color: white;
-      border-radius: 10px; font-size: 14px; font-weight: 700;
-      text-decoration: none; transition: all .2s;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px 28px; background: var(--dark); color: white;
+      border-radius: 50px; font-size: 14px; font-weight: 800;
+      text-decoration: none; transition: all .3s ease;
+      box-shadow: 0 10px 20px rgba(9,13,22,.15);
     }
-    .btn-goto:hover { background: var(--blue-dark); transform: translateY(-1px); }
+    .btn-goto:hover { background: var(--emerald); transform: translateY(-2px); }
 
     @media (max-width: 900px) {
       .left-panel { display: none; }
-      .right-panel { width: 100%; min-height: 100vh; }
+      .right-panel { width: 100%; min-height: 100vh; padding: 30px; }
     }
   </style>
 </head>
 <body>
 
-<!-- PANEL IZQUIERDO -->
 <div class="left-panel">
   <div class="left-content">
     <div class="left-brand">
-      Hospital Palacio de la salud
+      Hospital Palacio de la Salud
     </div>
   </div>
   <div class="left-hero left-content">
-    <h2>Únete a nuestra comunidad de salud</h2>
-    <p>Crea tu cuenta y accede a todos nuestros servicios médicos desde cualquier lugar.</p>
+    <h2>Forma parte de nuestra gran familia</h2>
+    <p>Crea tu cuenta en un par de minutos para agendar citas, llevar el control de tus visitas y recibir la atención que mereces.</p>
+  </div>
+  <div class="left-content" style="font-size: 13px; color: #64748b;">
+    Hospital Palacio de la Salud.
   </div>
 </div>
 
-<!-- PANEL DERECHO -->
 <div class="right-panel">
   <a href="<?= BASE_URL ?>/login.php" class="back-link">← Volver al inicio de sesión</a>
 
@@ -272,16 +257,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <polyline points="20 6 9 17 4 12"/>
       </svg>
     </div>
-    <h2>Cuenta creada</h2>
-    <p>Tu cuenta ha sido registrada exitosamente. Ya puedes iniciar sesión.</p>
-    <a href="<?= BASE_URL ?>/login.php" class="btn-goto">Ir al inicio de sesión</a>
+    <h2>¡Cuenta creada con éxito!</h2>
+    <p>Todo quedó listo. Ya puedes ingresar al sistema con tu correo y contraseña.</p>
+    <a href="<?= BASE_URL ?>/login.php" class="btn-goto">Ir a iniciar sesión</a>
   </div>
 
   <?php else: ?>
 
   <div class="form-header">
-    <h1>Crear cuenta</h1>
-    <p>Regístrate como paciente</p>
+    <h1>Crea tu cuenta</h1>
+    <p>Regístrate de forma rápida como paciente</p>
   </div>
 
   <?php if ($error): ?>
@@ -290,37 +275,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <form method="POST">
     <div class="form-group">
-      <label>Nombre completo</label>
+      <label>Tu nombre completo</label>
       <input type="text" name="nombre" class="form-control"
-             placeholder="Jose Hugo Ortiz Pedraza" required
+             placeholder="Ej. Valeria Salinas" required
              value="<?= htmlspecialchars($_POST['nombre'] ?? '') ?>">
     </div>
 
     <div class="form-group">
-      <label>Correo electrónico</label>
+      <label>Tu correo electrónico</label>
       <input type="email" name="email" class="form-control"
-             placeholder="tu@correo.com" required
+             placeholder="tucorreo@ejemplo.com" required
              value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
     </div>
 
     <div class="form-group">
-      <label>Contraseña</label>
+      <label>Elige una contraseña</label>
       <input type="password" name="password" id="password" class="form-control"
-             placeholder="Minimo 6 caracteres" required>
+             placeholder="Mínimo 6 caracteres" required>
       <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
       <div class="strength-text" id="strengthText"></div>
     </div>
 
     <div class="form-group">
-      <label>Confirmar contraseña</label>
+      <label>Confirma tu contraseña</label>
       <input type="password" name="password2" class="form-control"
-             placeholder="Repite tu contraseña" required>
+             placeholder="Repítela igual" required>
     </div>
 
-    <button type="submit" class="btn-register">Crear cuenta</button>
+    <button type="submit" class="btn-register">Registrarme ahora</button>
   </form>
+  
   <div class="login-link">
-    Ya tienes cuenta? <a href="<?= BASE_URL ?>/login.php">Inicia sesion</a>
+    ¿Ya tienes una cuenta? <a href="<?= BASE_URL ?>/login.php">Inicia sesión aquí</a>
   </div>
 
   <?php endif; ?>
@@ -342,11 +328,11 @@ pwd.addEventListener('input', () => {
 
   const levels = [
     { w: '0%',   bg: 'transparent', t: '' },
-    { w: '25%',  bg: '#ef4444', t: 'Muy debil' },
-    { w: '50%',  bg: '#f97316', t: 'Debil' },
+    { w: '25%',  bg: '#ef4444', t: 'Muy débil' },
+    { w: '50%',  bg: '#f97316', t: 'Débil' },
     { w: '75%',  bg: '#eab308', t: 'Regular' },
-    { w: '90%',  bg: '#22c55e', t: 'Fuerte' },
-    { w: '100%', bg: '#16a34a', t: 'Muy fuerte' },
+    { w: '90%',  bg: '#22c55e', t: 'Segura' },
+    { w: '100%', bg: '#059669', t: 'Muy segura' },
   ];
 
   const l = levels[Math.min(score, 5)];

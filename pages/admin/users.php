@@ -1,10 +1,9 @@
 <?php
-$pageTitle = 'Usuarios';
+$pageTitle = 'Control de Usuarios';
 require_once __DIR__ . '/../../config/config.php';
 requireRole('admin');
 require_once __DIR__ . '/../../includes/db.php';
 
-// Cambiar estado
 if (isset($_GET['toggle']) && is_numeric($_GET['toggle'])) {
     $id = (int)$_GET['toggle'];
     $conn->query("UPDATE usuarios SET activo = !activo WHERE id = $id");
@@ -12,7 +11,6 @@ if (isset($_GET['toggle']) && is_numeric($_GET['toggle'])) {
     exit;
 }
 
-// Cambiar rol
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_rol'])) {
     $id  = (int)$_POST['usuario_id'];
     $rol = $_POST['nuevo_rol'];
@@ -39,8 +37,8 @@ if ($params) { $stmt->bind_param($types, ...$params); }
 $stmt->execute();
 $usuarios = $stmt->get_result();
 
-$rolesLabel = ['admin'=>'Admin','doctor'=>'Doctor','paciente'=>'Paciente'];
-$colores = ['admin'=>'#dc2626','doctor'=>'#2563eb','paciente'=>'#059669'];
+$rolesLabel = ['admin'=>'Administrador','doctor'=>'Médico','paciente'=>'Paciente'];
+$colores = ['admin'=>'#ef4444','doctor'=>'#0284c7','paciente'=>'#059669'];
 ?>
 <?php include __DIR__ . '/../../includes/header.php'; ?>
 
@@ -50,8 +48,8 @@ $colores = ['admin'=>'#dc2626','doctor'=>'#2563eb','paciente'=>'#059669'];
   <div class="main">
     <div class="topbar">
       <div class="topbar-left">
-        <h1>Usuarios</h1>
-        <p>Gestion de usuarios del sistema</p>
+        <h1>Gestión de Usuarios</h1>
+        <p>Administra las cuentas registradas en la plataforma</p>
       </div>
       <div class="topbar-right">
         <div class="notif-btn">
@@ -64,22 +62,21 @@ $colores = ['admin'=>'#dc2626','doctor'=>'#2563eb','paciente'=>'#059669'];
 
     <div class="content">
 
-      <!-- Filtros -->
       <div class="card" style="margin-bottom:20px;">
         <div class="card-body" style="padding:16px 20px;">
           <form method="GET" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-            <input type="text" name="q" class="form-control" style="max-width:240px;"
-                   placeholder="Buscar por nombre o email..."
+            <input type="text" name="q" class="form-control" style="max-width:260px;"
+                   placeholder="Buscar por nombre o correo..."
                    value="<?= htmlspecialchars($busqueda) ?>">
-            <select name="rol" class="form-control" style="max-width:160px;">
-              <option value="">Todos los roles</option>
-              <option value="admin"    <?= $filtroRol === 'admin'    ? 'selected' : '' ?>>Admin</option>
-              <option value="doctor"   <?= $filtroRol === 'doctor'   ? 'selected' : '' ?>>Doctor</option>
-              <option value="paciente" <?= $filtroRol === 'paciente' ? 'selected' : '' ?>>Paciente</option>
+            <select name="rol" class="form-control" style="max-width:180px;">
+              <option value="">Todos los perfiles</option>
+              <option value="admin"    <?= $filtroRol === 'admin'    ? 'selected' : '' ?>>Administradores</option>
+              <option value="doctor"   <?= $filtroRol === 'doctor'   ? 'selected' : '' ?>>Médicos</option>
+              <option value="paciente" <?= $filtroRol === 'paciente' ? 'selected' : '' ?>>Pacientes</option>
             </select>
-            <button type="submit" class="btn btn-primary">Buscar</button>
+            <button type="submit" class="btn btn-primary">Buscar usuario</button>
             <?php if ($filtroRol || $busqueda): ?>
-            <a href="<?= BASE_URL ?>/pages/admin/users.php" class="btn btn-outline">Limpiar</a>
+            <a href="<?= BASE_URL ?>/pages/admin/users.php" class="btn btn-outline">Ver todos</a>
             <?php endif; ?>
           </form>
         </div>
@@ -87,17 +84,17 @@ $colores = ['admin'=>'#dc2626','doctor'=>'#2563eb','paciente'=>'#059669'];
 
       <div class="card">
         <div class="card-header">
-          <div><h2>Lista de usuarios</h2></div>
-          <a href="<?= BASE_URL ?>/register.php" class="btn btn-primary btn-sm">Nuevo usuario</a>
+          <div><h2>Listado general</h2></div>
+          <a href="<?= BASE_URL ?>/register.php" class="btn btn-primary btn-sm">Crear nuevo usuario</a>
         </div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
                 <th>Usuario</th>
-                <th>Rol</th>
-                <th>Estado</th>
-                <th>Registro</th>
+                <th>Perfil</th>
+                <th>Estatus</th>
+                <th>Fecha de registro</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -117,12 +114,16 @@ $colores = ['admin'=>'#dc2626','doctor'=>'#2563eb','paciente'=>'#059669'];
                   </div>
                 </td>
                 <td><?= $rolesLabel[$u['rol']] ?? $u['rol'] ?></td>
-                <td><?= $u['activo'] ? 'Activo' : 'Inactivo' ?></td>
+                <td>
+                  <span class="badge <?= $u['activo'] ? 'badge-success' : 'badge-danger' ?>">
+                    <?= $u['activo'] ? 'Activo' : 'Inactivo' ?>
+                  </span>
+                </td>
                 <td><div class="td-muted"><?= date('d/m/Y', strtotime($u['created_at'])) ?></div></td>
                 <td>
                   <a href="?toggle=<?= $u['id'] ?>"
                      class="btn btn-sm <?= $u['activo'] ? 'btn-outline' : 'btn-success' ?>"
-                     onclick="return confirm('<?= $u['activo'] ? 'Desactivar' : 'Activar' ?> este usuario?')">
+                     onclick="return confirm('¿Estás seguro de que deseas <?= $u['activo'] ? 'desactivar' : 'activar' ?> este usuario?')">
                     <?= $u['activo'] ? 'Desactivar' : 'Activar' ?>
                   </a>
                 </td>
@@ -134,7 +135,7 @@ $colores = ['admin'=>'#dc2626','doctor'=>'#2563eb','paciente'=>'#059669'];
                   <div class="empty-icon">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                   </div>
-                  <p>No se encontraron usuarios</p>
+                  <p>No encontramos ningún usuario con esos criterios</p>
                 </div>
               </td></tr>
             <?php endif; ?>

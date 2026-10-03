@@ -4,14 +4,12 @@ require_once __DIR__ . '/../../config/config.php';
 requireRole('doctor');
 require_once __DIR__ . '/../../includes/db.php';
 
-// Obtener ID del doctor
 $docRow = $conn->prepare("SELECT d.id FROM doctores d WHERE d.usuario_id = ?");
 $docRow->bind_param('i', $_SESSION['usuario_id']);
 $docRow->execute();
 $doctor = $docRow->get_result()->fetch_assoc();
 $doctor_id = $doctor['id'] ?? 0;
 
-// Busqueda
 $search = $_GET['search'] ?? '';
 
 $sql = "SELECT DISTINCT 
@@ -41,7 +39,7 @@ $stmt->bind_param('iiii', $doctor_id, $doctor_id, $doctor_id, $doctor_id);
 $stmt->execute();
 $pacientes = $stmt->get_result();
 
-$colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
+$colores = ['#059669','#0d9488','#10b981','#0284c7','#6366f1','#8b5cf6'];
 ?>
 
 <?php include __DIR__ . '/../../includes/header.php'; ?>
@@ -53,7 +51,7 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
     <div class="topbar">
       <div class="topbar-left">
         <h1>Mis Pacientes</h1>
-        <p>Pacientes que has atendido</p>
+        <p>Personas que has atendido en consulta</p>
       </div>
       <div class="topbar-right">
         <div class="topbar-avatar"><?= strtoupper(substr($_SESSION['nombre'],0,2)) ?></div>
@@ -61,27 +59,25 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
     </div>
 
     <div class="content">
-      <!-- Busqueda -->
       <div class="card" style="margin-bottom: 24px;">
         <div class="card-header">
           <h2>Buscar paciente</h2>
         </div>
-        <form method="GET" style="display: flex; gap: 12px;">
+        <form method="GET" style="display: flex; gap: 12px; padding: 4px;">
           <input type="text" name="search" class="form-control" style="flex: 1;" 
-                 placeholder="Buscar por nombre, correo o telefono..." 
+                 placeholder="Busca por nombre, correo o teléfono..." 
                  value="<?= htmlspecialchars($search) ?>">
           <button type="submit" class="btn btn-primary">Buscar</button>
           <?php if ($search): ?>
-            <a href="pacientes.php" class="btn btn-ghost">Limpiar</a>
+            <a href="pacientes.php" class="btn btn-ghost">Mostrar todos</a>
           <?php endif; ?>
         </form>
       </div>
 
-      <!-- Estadisticas rapidas -->
       <div class="stats-grid" style="margin-bottom: 24px; grid-template-columns: repeat(3, 1fr);">
         <div class="stat-card">
           <div class="stat-value"><?= $pacientes->num_rows ?></div>
-          <div class="stat-label">Total Pacientes</div>
+          <div class="stat-label">Pacientes en total</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">
@@ -96,7 +92,7 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
             echo $recientes;
             ?>
           </div>
-          <div class="stat-label">Activos (30 dias)</div>
+          <div class="stat-label">Activos este mes</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">
@@ -109,19 +105,18 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
             echo $totalCitas;
             ?>
           </div>
-          <div class="stat-label">Total Consultas</div>
+          <div class="stat-label">Consultas brindadas</div>
         </div>
       </div>
 
-      <!-- Grid de pacientes -->
       <?php if ($pacientes->num_rows > 0): 
         $pacientes->data_seek(0);
       ?>
         <div class="pacientes-grid">
           <?php while ($p = $pacientes->fetch_assoc()): 
             $color = $colores[crc32($p['nombre']) % count($colores)];
-            $edad = $p['fecha_nacimiento'] ? date('Y') - date('Y', strtotime($p['fecha_nacimiento'])) : 'N/A';
-            $ultimaCita = $p['ultima_cita'] ? date('d/m/Y', strtotime($p['ultima_cita'])) : 'Sin citas';
+            $edad = $p['fecha_nacimiento'] ? (date('Y') - date('Y', strtotime($p['fecha_nacimiento']))) . ' años' : 'No registrada';
+            $ultimaCita = $p['ultima_cita'] ? date('d/m/Y', strtotime($p['ultima_cita'])) : 'Sin consultas previas';
           ?>
             <div class="paciente-card">
               <div class="paciente-avatar" style="background: <?= $color ?>">
@@ -131,32 +126,34 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
                 <h3><?= htmlspecialchars($p['nombre']) ?></h3>
                 <p class="email"><?= htmlspecialchars($p['email']) ?></p>
                 <?php if ($p['telefono']): ?>
-                  <p class="phone"><?= htmlspecialchars($p['telefono']) ?></p>
+                  <p class="phone">Tel: <?= htmlspecialchars($p['telefono']) ?></p>
                 <?php endif; ?>
                 <p class="details">
-                  Edad: <?= $edad ?> anos | 
-                  Sangre: <?= $p['tipo_sangre'] ?: 'No registrado' ?> |
+                  Edad: <?= $edad ?> &bull; 
+                  Sangre: <?= $p['tipo_sangre'] ?: 'N/D' ?> &bull;
                   Citas: <?= $p['total_citas'] ?>
                 </p>
-                <p class="last-visit">Ultima cita: <?= $ultimaCita ?></p>
+                <p class="last-visit">Última visita: <?= $ultimaCita ?></p>
                 <?php if ($p['alergias']): ?>
                   <p class="alergies">Alergias: <?= htmlspecialchars(substr($p['alergias'], 0, 50)) ?></p>
                 <?php endif; ?>
               </div>
               <div class="paciente-actions">
                 <a href="<?= BASE_URL ?>/pages/historial/ver.php?paciente_id=<?= $p['paciente_id'] ?>&doctor_id=<?= $doctor_id ?>" 
-                   class="btn btn-sm btn-primary">Historial</a>
+                   class="btn btn-sm btn-primary">Expediente</a>
                 <a href="<?= BASE_URL ?>/pages/citas/agendar.php?paciente_id=<?= $p['paciente_id'] ?>" 
-                   class="btn btn-sm btn-outline">Nueva Cita</a>
+                   class="btn btn-sm btn-outline">Agendar cita</a>
               </div>
             </div>
           <?php endwhile; ?>
         </div>
       <?php else: ?>
         <div class="empty-state">
-          <div class="empty-icon">[Sin datos]</div>
-          <p>No tienes pacientes registrados aun</p>
-          <p class="sub">Las citas que atiendas apareceran aqui automaticamente</p>
+          <div class="empty-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <p>Aún no tienes pacientes registrados en tu historial</p>
+          <p class="sub">Aparecerán aquí automáticamente conforme vayas atendiendo tus citas</p>
         </div>
       <?php endif; ?>
     </div>
@@ -172,18 +169,19 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
 
 .paciente-card {
   background: white;
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
-  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
   display: flex;
   gap: 16px;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.02);
 }
 
 .paciente-card:hover {
-  border-color: var(--blue);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transform: translateY(-2px);
+  border-color: var(--emerald, #059669);
+  box-shadow: 0 15px 30px rgba(5,150,105,.08);
+  transform: translateY(-4px);
 }
 
 .paciente-avatar {
@@ -194,9 +192,10 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   color: white;
   flex-shrink: 0;
+  box-shadow: 0 8px 16px rgba(0,0,0,.1);
 }
 
 .paciente-info {
@@ -205,14 +204,14 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
 
 .paciente-info h3 {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 4px;
   color: var(--text);
 }
 
 .paciente-info .email,
 .paciente-info .phone {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
   margin: 2px 0;
 }
@@ -221,18 +220,21 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
   font-size: 12px;
   color: var(--muted);
   margin-top: 8px;
+  font-weight: 600;
 }
 
 .paciente-info .last-visit {
-  font-size: 11px;
-  color: var(--blue);
+  font-size: 12px;
+  color: var(--emerald, #059669);
   margin-top: 4px;
+  font-weight: 600;
 }
 
 .paciente-info .alergies {
-  font-size: 11px;
-  color: #dc2626;
+  font-size: 12px;
+  color: #e11d48;
   margin-top: 4px;
+  font-weight: 600;
 }
 
 .paciente-actions {
@@ -243,32 +245,36 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
 }
 
 .btn-sm {
-  padding: 6px 12px;
+  padding: 8px 14px;
   font-size: 12px;
+  border-radius: 10px;
 }
 
 .stat-card {
   background: white;
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
-  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
   text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.02);
 }
 
 .stat-value {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 800;
-  color: var(--blue);
+  color: var(--emerald, #059669);
+  letter-spacing: -1px;
 }
 
 .stat-label {
   font-size: 13px;
   color: var(--muted);
-  margin-top: 4px;
+  margin-top: 6px;
+  font-weight: 600;
 }
 
 .empty-state .sub {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 8px;
 }

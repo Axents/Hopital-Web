@@ -11,7 +11,6 @@ $usuario_id = $_SESSION['usuario_id'];
 $rol = $_SESSION['rol'];
 $mensaje = '';
 
-// Obtener el ID segun el rol
 if ($rol === 'paciente') {
     $pacienteRow = $conn->prepare("SELECT id FROM pacientes WHERE usuario_id = ?");
     $pacienteRow->bind_param('i', $usuario_id);
@@ -19,7 +18,6 @@ if ($rol === 'paciente') {
     $paciente = $pacienteRow->get_result()->fetch_assoc();
     $paciente_id = $paciente['id'] ?? 0;
     
-    // Obtener citas del paciente
     $citas = $conn->prepare("
         SELECT c.*, 
                u.nombre AS doctor_nombre,
@@ -40,7 +38,6 @@ if ($rol === 'paciente') {
     $doctor = $doctorRow->get_result()->fetch_assoc();
     $doctor_id = $doctor['id'] ?? 0;
     
-    // Obtener citas del doctor
     $citas = $conn->prepare("
         SELECT c.*, 
                u.nombre AS paciente_nombre,
@@ -61,7 +58,6 @@ if ($rol === 'paciente') {
 $citas->execute();
 $citasResult = $citas->get_result();
 
-// Procesar cancelacion de cita
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancelar_cita'])) {
     $cita_id = $_POST['cita_id'];
     
@@ -105,7 +101,6 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
         <div class="alert-success-modern">Cita cancelada correctamente</div>
       <?php endif; ?>
 
-      <!-- Stats resumen -->
       <?php
       $totalCitas = $citasResult->num_rows;
       $citasPendientes = 0;
@@ -664,7 +659,6 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
   transform: translateY(-2px);
 }
 
-/* Responsive */
 @media (max-width: 900px) {
   .stats-citas-grid {
     grid-template-columns: repeat(2, 1fr);
