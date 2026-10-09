@@ -38,12 +38,11 @@ $nav = match($rol) {
 
   <div class="sidebar-brand">
     <div>
-      <div class="sidebar-brand-text">Hospital Palacio de la salud</div>
+      <div class="sidebar-brand-text">Clinica Uriangato</div>
       <div class="sidebar-brand-role"><?= ucfirst($rol) ?></div>
     </div>
   </div>
 
-  <button onclick="toggleTheme()">Tema oscuro</button>
   <nav class="sidebar-nav">
     <div class="nav-section-label">Menu</div>
     <?php foreach ($nav as $item):

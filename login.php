@@ -44,7 +44,7 @@ if (isset($_GET['rol'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar sesión — Hospital Palacio de la Salud</title>
+  <title>Iniciar sesión — Clinica Uriangato</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -281,7 +281,7 @@ if (isset($_GET['rol'])) {
 <div class="left-panel">
   <div class="left-content">
     <div class="left-brand">
-      Hospital Palacio de la Salud
+      Clinica Uriangato
     </div>
   </div>
 
@@ -291,7 +291,7 @@ if (isset($_GET['rol'])) {
   </div>
   
   <div class="left-content" style="font-size: 13px; color: #64748b;">
-    Hospital Palacio de la Salud.
+      Clinica Uriangato
   </div>
 </div>
 

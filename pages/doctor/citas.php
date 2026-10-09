@@ -183,7 +183,6 @@ $colores = ['#2563eb','#7c3aed','#db2777','#059669','#d97706','#dc2626'];
         </a>
       </div>
 
-      <!-- Lista de citas -->
       <?php if ($citasResult->num_rows > 0): ?>
         <div class="citas-container">
           <?php while ($c = $citasResult->fetch_assoc()): 

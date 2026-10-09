@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Regístrate — Hospital Palacio de la Salud</title>
+  <title>Regístrate — Clinica Uriangato</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -235,20 +235,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="left-panel">
   <div class="left-content">
     <div class="left-brand">
-      Hospital Palacio de la Salud
+      Clinica Uriangato
     </div>
   </div>
   <div class="left-hero left-content">
     <h2>Forma parte de nuestra gran familia</h2>
-    <p>Crea tu cuenta en un par de minutos para agendar citas, llevar el control de tus visitas y recibir la atención que mereces.</p>
+    <p>Crea tu cuenta para agendar citas, llevar el control de tus visitas y recibir la atención que mereces.</p>
   </div>
   <div class="left-content" style="font-size: 13px; color: #64748b;">
-    Hospital Palacio de la Salud.
+    Clinica Uriangato.
   </div>
 </div>
 
 <div class="right-panel">
-  <a href="<?= BASE_URL ?>/login.php" class="back-link">← Volver al inicio de sesión</a>
+  <a href="<?= BASE_URL ?>/login.php" class="back-link">Regresar al inicio de sesión</a>
 
   <?php if ($success): ?>
   <div class="success-state">
@@ -257,7 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <polyline points="20 6 9 17 4 12"/>
       </svg>
     </div>
-    <h2>¡Cuenta creada con éxito!</h2>
+    <h2>Cuenta creada</h2>
     <p>Todo quedó listo. Ya puedes ingresar al sistema con tu correo y contraseña.</p>
     <a href="<?= BASE_URL ?>/login.php" class="btn-goto">Ir a iniciar sesión</a>
   </div>

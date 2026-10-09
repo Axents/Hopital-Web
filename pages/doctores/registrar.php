@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div style="width:64px;height:64px;background:#ecfdf5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <h2 style="font-size:22px;font-weight:800;margin-bottom:8px;color:var(--dark);">¡Doctor registrado con éxito!</h2>
+          <h2 style="font-size:22px;font-weight:800;margin-bottom:8px;color:var(--dark);">Doctor registrado con éxito</h2>
           <p style="color:#64748b;font-size:14px;margin-bottom:28px;">El médico ha sido agregado correctamente a la plataforma.</p>
           <div style="display:flex;gap:12px;justify-content:center;">
             <a href="<?= BASE_URL ?>/pages/doctores/listar.php" class="btn btn-primary" style="background:var(--emerald); border-radius:50px; font-weight:700; padding: 12px 24px;">Ver lista de doctores</a>
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           <form method="POST">
             <div class="form-group" style="margin-bottom: 20px;">
-              <label style="font-weight:700; color:var(--dark); display:block; margin-bottom:8px;">Nombre completo *</label>
+              <label style="font-weight:700; color:var(--dark); display:block; margin-bottom:8px;">Nombre completo </label>
               <input type="text" name="nombre" class="form-control"
                      placeholder="Ej. Roberto Gómez Mendoza" required
                      value="<?= htmlspecialchars($_POST['nombre'] ?? '') ?>">
@@ -92,13 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom: 20px;">
               <div class="form-group">
-                <label style="font-weight:700; color:var(--dark); display:block; margin-bottom:8px;">Correo electrónico *</label>
+                <label style="font-weight:700; color:var(--dark); display:block; margin-bottom:8px;">Correo electrónico </label>
                 <input type="email" name="email" class="form-control"
                        placeholder="doctor@hospital.com" required
                        value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
               </div>
               <div class="form-group">
-                <label style="font-weight:700; color:var(--dark); display:block; margin-bottom:8px;">Contraseña provisional *</label>
+                <label style="font-weight:700; color:var(--dark); display:block; margin-bottom:8px;">Contraseña provisional </label>
                 <input type="password" name="password" class="form-control"
                        placeholder="Mínimo 6 caracteres" required>
               </div>

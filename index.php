@@ -9,7 +9,8 @@ if (isLoggedIn()) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hospital Palacio de la Salud</title>
+  <title>      Clinica Uriangato
+</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -295,7 +296,8 @@ if (isLoggedIn()) {
 
 <nav>
   <div class="nav-brand">
-    <span>Hospital</span> Palacio de la Salud
+    <span>Hospital</span>       Clinica Uriangato
+
   </div>
   <ul class="nav-links">
     <li><a href="#servicios">Especialidades</a></li>
@@ -418,7 +420,7 @@ if (isLoggedIn()) {
 </div>
 
 <footer>
-  <div class="footer-brand">Hospital Palacio de la Salud</div>
+  <div class="footer-brand">Clinica Uriangato</div>
   <p>Desarrollado con mucho esfuerzo por: Aylin, Cano, Arnold, Nambo y Andrés.</p>
 </footer>
 

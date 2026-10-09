@@ -44,7 +44,7 @@ $colores = ['#059669','#0d9488','#10b981','#0284c7','#6366f1','#8b5cf6'];
     <div class="topbar">
       <div class="topbar-left">
         <h1>Panel General</h1>
-        <p>Bienvenido al centro de control, aquí tienes un resumen de la actividad</p>
+        <p>Bienvenido</p>
       </div>
       <div class="topbar-right">
         <div class="notif-btn">

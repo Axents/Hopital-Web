@@ -86,7 +86,7 @@ $horas = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
           <div style="width:64px;height:64px;background:#ecfdf5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <h2 style="font-size:22px;font-weight:800;margin-bottom:8px;color:var(--dark);">¡Cita agendada con éxito!</h2>
+          <h2 style="font-size:22px;font-weight:800;margin-bottom:8px;color:var(--dark);">Cita agendada con éxito</h2>
           <p style="color:#64748b;font-size:15px;margin-bottom:28px;">Tu cita médica ha sido registrada correctamente en el sistema.</p>
           <div style="display:flex;gap:12px;justify-content:center;">
             <a href="<?= BASE_URL ?>/pages/citas/ver.php" class="btn btn-primary" style="background:var(--emerald); border-radius:50px; font-weight:700; padding: 12px 24px;">Ver mis citas</a>
@@ -116,9 +116,9 @@ $horas = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
 
             <form method="POST">
               <div class="form-group" style="margin-bottom: 20px;">
-                <label style="font-weight: 700; color: var(--dark); display: block; margin-bottom: 8px;">Médico especialista *</label>
+                <label style="font-weight: 700; color: var(--dark); display: block; margin-bottom: 8px;">Médico especialista </label>
                 <select name="doctor_id" class="form-control" required>
-                  <option value="">— Selecciona un especialista —</option>
+                  <option value=""> Selecciona un especialista </option>
                   <?php
                   $doctores->data_seek(0);
                   while ($d = $doctores->fetch_assoc()):
@@ -133,15 +133,15 @@ $horas = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
 
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom: 20px;">
                 <div class="form-group">
-                  <label style="font-weight: 700; color: var(--dark); display: block; margin-bottom: 8px;">Fecha *</label>
+                  <label style="font-weight: 700; color: var(--dark); display: block; margin-bottom: 8px;">Fecha </label>
                   <input type="date" name="fecha" class="form-control"
                          min="<?= date('Y-m-d') ?>" required
                          value="<?= htmlspecialchars($_POST['fecha'] ?? '') ?>">
                 </div>
                 <div class="form-group">
-                  <label style="font-weight: 700; color: var(--dark); display: block; margin-bottom: 8px;">Hora *</label>
+                  <label style="font-weight: 700; color: var(--dark); display: block; margin-bottom: 8px;">Hora </label>
                   <select name="hora" class="form-control" required>
-                    <option value="">— Selecciona hora —</option>
+                    <option value=""> Selecciona hora </option>
                     <?php foreach ($horas as $h): ?>
                     <option value="<?= $h ?>" <?= ($_POST['hora'] ?? '') === $h ? 'selected' : '' ?>>
                       <?= date('h:i A', strtotime($h)) ?>

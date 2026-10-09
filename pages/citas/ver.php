@@ -84,7 +84,7 @@ $colores = ['#059669','#0d9488','#10b981','#0284c7','#6366f1','#8b5cf6'];
 
       <?php if ($rol === 'paciente'): ?>
       <div style="margin-bottom:20px;">
-        <a href="<?= BASE_URL ?>/pages/citas/agendar.php" class="btn btn-primary" style="background:var(--emerald); border-radius:50px; font-weight:700; padding: 12px 24px;">+ Agendar Nueva Cita</a>
+        <a href="<?= BASE_URL ?>/pages/citas/agendar.php" class="btn btn-primary" style="background:#DCDCDC; border-radius:50px; font-weight:700; padding: 12px 24px; color:black; ">+ Agendar Nueva Cita</a>
       </div>
       <?php endif; ?>
 
