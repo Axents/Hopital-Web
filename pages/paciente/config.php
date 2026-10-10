@@ -99,85 +99,46 @@ if(isset($_POST['guardar'])){
         $error = 'Hubo un problema al actualizar tus datos. Inténtalo de nuevo.';
     }
 }
-
-if(isset($_POST['password'])){
-
-    $nueva = $_POST['nueva_password'];
-    $confirmar = $_POST['confirmar_password'];
-
-    if($nueva !== $confirmar){
-
-        $error = 'Las contraseñas nuevas no coinciden';
-
-    }else{
-
-        $passHash = password_hash($nueva, PASSWORD_DEFAULT);
-
-        $updatePass = $conn->prepare("
-            UPDATE usuarios
-            SET password = ?
-            WHERE id = ?
-        ");
-
-        $updatePass->bind_param(
-            'si',
-            $passHash,
-            $_SESSION['usuario_id']
-        );
-
-        if($updatePass->execute()){
-            $success = 'Tu contraseña se actualizó con éxito';
-        }else{
-            $error = 'No se pudo actualizar la contraseña';
-        }
-    }
-}
 ?>
 
 <?php include __DIR__ . '/../../includes/header.php'; ?>
 
 <div class="layout">
-
 <?php include __DIR__ . '/../../includes/sidebar.php'; ?>
 
 <div class="main">
-
 <div class="topbar">
-
     <div class="topbar-left">
         <h1>Configuración</h1>
         <p>Actualiza tu información personal y datos de contacto</p>
     </div>
-
     <div class="topbar-right">
         <div class="topbar-avatar">
             <?= strtoupper(substr($_SESSION['nombre'],0,2)) ?>
         </div>
     </div>
-
 </div>
 
 <div class="content">
+<div class="card" style="max-width: 850px; margin: 0 auto; border-radius: 20px; box-shadow: 0 10px 30px rgba(15,23,42,0.05); border: 1px solid #e2e8f0;">
 
-<div class="card" style="max-width: 800px; margin: 0 auto;">
-
-<div class="card-header">
+<div class="card-header" style="border-bottom: 1px solid #e2e8f0; padding: 24px;">
     <div>
-        <h2>Información Personal</h2>
-        <p>Modifica los campos necesarios para mantener tu expediente al día</p>
+        <h2 style="color: #0f172a; font-size: 20px; font-weight: 800;">Información Personal</h2>
+        <p style="color: #64748b; font-size: 14px;">Modifica los campos necesarios para mantener tu expediente al día</p>
     </div>
 </div>
 
-<div class="card-body">
+<div class="card-body" style="padding: 30px;">
 
 <?php if($success): ?>
-<div class="alert alert-success">
+<div class="alert alert-success" style="background: #fdf8f0; border: 1px solid #c5a059; color: #854d0e; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-weight: 600;">
     <?= $success ?>
 </div>
 <?php endif; ?>
 
 <?php if($error): ?>
-<div class="alert alert-danger">
+<div class="alert alert-danger" style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-weight: 600;">
     <?= $error ?>
 </div>
 <?php endif; ?>
@@ -185,94 +146,59 @@ if(isset($_POST['password'])){
 <form method="POST">
 
 <div class="form-group" style="margin-bottom: 20px;">
-<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Nombre completo</label>
-<input type="text"
-       name="nombre"
-       class="form-control"
-       value="<?= htmlspecialchars($paciente['nombre']) ?>" required>
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: #0f172a; font-size: 13px;">Nombre completo</label>
+<input type="text" name="nombre" class="form-control" style="width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #f8fafc;" value="<?= htmlspecialchars($paciente['nombre']) ?>" required>
 </div>
 
 <div class="form-group" style="margin-bottom: 20px;">
-<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Correo electrónico</label>
-<input type="email"
-       name="email"
-       class="form-control"
-       value="<?= htmlspecialchars($paciente['email']) ?>" required>
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: #0f172a; font-size: 13px;">Correo electrónico</label>
+<input type="email" name="email" class="form-control" style="width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #f8fafc;" value="<?= htmlspecialchars($paciente['email']) ?>" required>
 </div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px; margin-bottom: 20px;">
 
 <div class="form-group">
-<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Teléfono</label>
-<input type="text"
-       name="telefono"
-       class="form-control"
-       value="<?= htmlspecialchars($paciente['telefono'] ?? '') ?>"
-       placeholder="Ej. 555-123-4567">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: #0f172a; font-size: 13px;">Teléfono</label>
+<input type="text" name="telefono" class="form-control" style="width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #f8fafc;" value="<?= htmlspecialchars($paciente['telefono'] ?? '') ?>" placeholder="Ej. 555-123-4567">
 </div>
 
 <div class="form-group">
-<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Dirección</label>
-<input type="text"
-       name="direccion"
-       class="form-control"
-       value="<?= htmlspecialchars($paciente['direccion'] ?? '') ?>"
-       placeholder="Calle, número, ciudad">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: #0f172a; font-size: 13px;">Dirección</label>
+<input type="text" name="direccion" class="form-control" style="width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #f8fafc;" value="<?= htmlspecialchars($paciente['direccion'] ?? '') ?>" placeholder="Calle, número, ciudad">
 </div>
 
 <div class="form-group">
-<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Fecha de nacimiento</label>
-<input type="date"
-       name="fecha_nacimiento"
-       class="form-control"
-       value="<?= htmlspecialchars($paciente['fecha_nacimiento'] ?? '') ?>">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: #0f172a; font-size: 13px;">Fecha de nacimiento</label>
+<input type="date" name="fecha_nacimiento" class="form-control" style="width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #f8fafc;" value="<?= htmlspecialchars($paciente['fecha_nacimiento'] ?? '') ?>">
 </div>
 
 <div class="form-group">
-<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Edad actual</label>
-<input type="text"
-       class="form-control"
-       value="<?= $edad ? $edad . ' años' : 'No calculada' ?>"
-       readonly style="background: #f1f5f9;">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: #0f172a; font-size: 13px;">Edad actual</label>
+<input type="text" class="form-control" value="<?= $edad ? $edad . ' años' : 'No calculada' ?>" readonly style="width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #f1f5f9; color: #64748b;">
 </div>
 
 <div class="form-group" style="grid-column: 1 / -1;">
-<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Tipo de sangre</label>
-<input type="text"
-       name="tipo_sangre"
-       class="form-control"
-       value="<?= htmlspecialchars($paciente['tipo_sangre'] ?? '') ?>"
-       placeholder="Ej. O+">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: #0f172a; font-size: 13px;">Tipo de sangre</label>
+<input type="text" name="tipo_sangre" class="form-control" style="width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #f8fafc;" value="<?= htmlspecialchars($paciente['tipo_sangre'] ?? '') ?>" placeholder="Ej. O+">
 </div>
 
-<div class="form-group" style="grid-column:1 / span 2;">
-<label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--dark);">Alergias o padecimientos relevantes</label>
-<textarea name="alergias"
-          class="form-control"
-          rows="3"
-          placeholder="Menciona si eres alérgico a algún medicamento o sustancia"><?= htmlspecialchars($paciente['alergias'] ?? '') ?></textarea>
+<div class="form-group" style="grid-column: 1 / -1;">
+<label style="display: block; font-weight: 700; margin-bottom: 8px; color: #0f172a; font-size: 13px;">Alergias o padecimientos relevantes</label>
+<textarea name="alergias" class="form-control" rows="3" style="width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; background: #f8fafc; font-family: inherit;" placeholder="Menciona si eres alérgico a algún medicamento"><?= htmlspecialchars($paciente['alergias'] ?? '') ?></textarea>
 </div>
 
 </div>
 
-<button type="submit"
-        name="guardar"
-        class="btn btn-primary" style="background: var(--emerald); border: none; padding: 12px 24px; border-radius: 50px; font-weight: 700; cursor: pointer;">
+<button type="submit" name="guardar" style="background: #0f172a; color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: background 0.2s, transform 0.2s; box-shadow: 0 4px 12px rgba(15,23,42,0.15);">
 Guardar cambios
 </button>
 
 </form>
 
 </div>
-
 </div>
-
 </div>
-
 </div>
-
-</div>
-
 </div>
 
 <?php include __DIR__ . '/../../includes/footer.php'; ?>
